@@ -257,6 +257,8 @@ int fib(int n) {
   - Rule: `in` tasks must execute after any **previously created** `out` / `inout` tasks
   - Note! The dependency variables can also be dummy variables used solely for ordering the tasks
 
+# Example: Task dependencies
+
 ```c
 int a, b;
 
@@ -266,6 +268,7 @@ a = -1;
 #pragma omp task depend(in: a) // Guaranteed to run after the `out: a` task
 b = 2 * a;
 ```
+
 
 # Summary {.section}
 
