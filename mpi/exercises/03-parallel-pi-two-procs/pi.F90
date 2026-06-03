@@ -1,3 +1,7 @@
+! SPDX-FileCopyrightText: 2019 CSC - IT Center for Science Ltd. <www.csc.fi>
+!
+! SPDX-License-Identifier: MIT
+
 program serial_pi
   use iso_fortran_env, only : REAL64
   implicit none

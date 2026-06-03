@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Heat equation solver in parallel with MPI
 
 Parallelise our implementation of a two-dimensional heat equation solver using

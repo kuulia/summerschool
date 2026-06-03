@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024 CSC - IT Center for Science Ltd. <www.csc.fi>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include <stdio.h>
 #include <unistd.h>  // for sleep()
 #include <mpi.h>

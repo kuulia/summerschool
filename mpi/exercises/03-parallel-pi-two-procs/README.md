@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2019 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 <!-- Adapted from material by EPCC https://github.com/EPCCed/archer2-MPI-2020-05-14 -->
 
 # Parallel calculation of π

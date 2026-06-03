@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Using custom datatypes
 
 Write a program that sends the highlighted elements of a 2D array

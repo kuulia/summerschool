@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 /* Heat equation solver in 2D. */
 
 #include <stdio.h>

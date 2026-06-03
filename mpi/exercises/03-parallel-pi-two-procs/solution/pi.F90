@@ -1,3 +1,7 @@
+! SPDX-FileCopyrightText: 2019 CSC - IT Center for Science Ltd. <www.csc.fi>
+!
+! SPDX-License-Identifier: MIT
+
 program parallel_pi
   use mpi_f08
   use iso_fortran_env, only : REAL64

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Hello World with MPI
 
 1. Write a parallel program that prints "Hello world!" from all processes.

@@ -1,3 +1,7 @@
+! SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+!
+! SPDX-License-Identifier: MIT
+
 ! Main solver routines for heat equation solver
 module core
   use heat

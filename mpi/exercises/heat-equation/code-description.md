@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 <!-- Adapted from material by ENCCS -->
 
 # Heat equation in 2D
