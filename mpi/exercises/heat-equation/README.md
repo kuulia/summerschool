@@ -51,11 +51,30 @@ the parallelization as follows (marked with TODOs in the source code):
    - in [cpp/core.cpp](cpp/core.cpp) or
    - in [fortran/core.F90](fortran/core.F90)
 
-To build the code, please use the provided `Makefile` (by typing `make`).
+There is a working serial code under [cpp/serial](cpp/serial) / [fortran/serial](fortran/serial)
+which you can use as a reference.
 
-There is also working serial code under [cpp/serial](cpp/serial) / [fortran/serial](fortran/serial)
-which you can use as reference.
+To build the code, please use the provided `Makefile` and specify which version you'd like to build using the `TARGET` variable.
+If not specified, the `Makefile` will default to the C++ version at [](cpp/). Other options:
 
+- Build the C-version:
+```bash
+make TARGET=c -j4
+```
+- Build the Fortran version:
+```bash
+make TARGET=fortran
+```
+- Build the Fortran serial implementation:
+```bash
+make TARGET=fortran/serial
+```
+- Build a specified model solution
+```bash
+make TARGET=cpp/solution-rend-recv -j6
+```
+
+Use the `COMP` variable if building on systems other than LUMI. `COMP=gnu` should work on any Unix-like system.
 
 ### Using sendrecv
 
