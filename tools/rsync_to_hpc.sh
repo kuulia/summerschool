@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
 # Script for rsyncing projects from local to a remote HPC system,
 # so that folder structure is preserved relative to a configurable "root" directory
 
