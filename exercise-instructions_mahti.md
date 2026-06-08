@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2010 CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # General exercise instructions for Mahti
 
 ## Accessing Mahti
@@ -17,14 +23,14 @@ See [wiki](../../wiki/Setting-up-CSC-account-and-SSH) for further details.
 All the exercises should be carried out in the scratch disk area.
 This scratch area is shared between all the project members, so create a personal working directory there:
 
-    mkdir -p /scratch/project_2014370/$USER
-    cd /scratch/project_2014370/$USER
+    mkdir -p /scratch/project_2019219/$USER
+    cd /scratch/project_2019219/$USER
 
 and clone the summer school git repository there:
 
-    git clone https://github.com/csc-training/summerschool.git /scratch/project_2014370/$USER/summerschool
+    git clone https://github.com/csc-training/summerschool.git /scratch/project_2019219/$USER/summerschool
 
-Now, `/scratch/project_2014370/$USER/summerschool` is your own clone of the summer school repository on Mahti
+Now, `/scratch/project_2019219/$USER/summerschool` is your own clone of the summer school repository on Mahti
 and you can modify files there without causing conflicts with other summer school participants.
 
 <details>
@@ -45,205 +51,219 @@ to the file `$HOME/.bashrc`.
 
 </details>
 
+## Editors
 
-## Compilation
+For editing program source files you can use e.g. the *nano* editor:
 
-### MPI
+    nano test.F90
 
-Compilation of the MPI programs can be performed with the `mpif90`,
-`mpicxx`, and `mpicc` wrapper commands:
-```
-mpif90 -o my_mpi_exe test.f90
-```
-or
-```
-mpicxx -o my_mpi_exe test.cpp
-```
-or
-```
-mpicc -o my_mpi_exe test.c
-```
+(`^` in nano's shortcuts refer to **Ctrl** key, *i.e.* in order to save the file and exit the editor press `Ctrl+X`)
+Also other popular editors such as *emacs* and *vim* are available.
 
-The wrapper commands include automatically all the flags needed for building
-MPI programs.
 
-### OpenMP (threading with CPUs)
+## Compiling
 
-Pure OpenMP (as well as serial) programs can also be compiled with the `mpif90`,
-`mpicxx`, and `mpicc` wrapper commands. OpenMP is enabled with the
-`-fopenmp` flag:
-```
-mpif90 -o my_exe test.f90 -fopenmp
-```
-or
-```
-mpicxx -o my_exe test.cpp -fopenmp
-```
-or
-```
-mpicc -o my_exe test.c -fopenmp
+### CPU programming
+
+Mahti has several programming environments.
+
+For CPU programming use (this is the default environment activated without loading any modules):
+```bash
+module load gcc/11.2.0 openmpi/4.1.2
 ```
 
-When code uses also MPI, the wrapper commands include automatically all the flags needed for
-building MPI programs.
+#### MPI
 
-### HDF5
+Compilation of MPI programs in C, C++, and Fortran:
+```bash
+mpicc -O3 -Wall test.c -o test.x
+mpicxx -O3 -Wall test.cpp -o test.x
+mpif90 -O3 test.F90 -o test.x
+```
+
+The wrapper commands include automatically all the flags needed for building MPI programs.
+
+#### MPI+OpenMP and pure OpenMP (threading with CPUs)
+
+Both pure OpenMP and hybrid MPI+OpenMP programs can be compiled with the same wrappers
+by including `-fopenmp` flag:
+```bash
+mpicc -fopenmp -O3 -Wall test.c -o test.x
+mpicxx -fopenmp -O3 -Wall test.cpp -o test.x
+mpif90 -fopenmp -O3 test.F90 -o test.x
+```
+
+#### HDF5
 
 In order to use HDF5 in CSC supercomputers, you need the load the HDF5 module with MPI I/O support.
-The appropriate module in Mahti is
-```
+The appropriate module in Mahti:
+```bash
 module load hdf5/1.10.7-mpi
 ```
 
 When building programs, `-lhdf5` (C/C++) or `-lhdf5_fortran` (Fortran) needs to be added to linker flags, e.g.
-```
-mpicxx -o my_hdf5_exe test.cpp -lhdf5
-mpif90 -o my_hdf5_exe test.f90 -lhdf5_fortran
-```
-or setting `LDFLAGS` *etc.* in a Makefile:
-```
-LDFLAGS=... -lhdf5
+```bash
+mpicxx -O3 -Wall test.cpp -lhdf5 -o test.x
+mpif90 -O3 test.F90 -lhdf5_fortran -o test.x
 ```
 
-Usage in local workstation may vary.
 
-### OpenMP offloading
+### GPU programming
 
-On **Mahti**, in order to use programs with OpenMP offloading to GPUs, you need to reconfigure the modulepaths as follows:
+Mahti has several programming environments and we recommend
+using different environments for CUDA and OpenMP offload.
+
+#### CUDA and MPI+CUDA
+
+For GPU programming with CUDA use:
+```bash
+module load gcc/11.2.0 openmpi/4.1.2-cuda cuda/11.5.0
+```
+
+Compilation of CUDA programs:
+```bash
+nvcc -O3 -gencode arch=compute_80,code=sm_80 test.cu -o test.x
+```
+
+Compilation of MPI+CUDA programs is a bit more complex as we need to include the MPI flags.
+This can be automated by following lines (only the last line needs to be edited):
+```bash
+# Parse MPI options for compiler
+Xcompiler="-Xcompiler $(mpicxx --showme | tr ' ' '\n' | sed '/^-Wl,/d;1d' | paste -sd, -)"
+
+# Parse MPI options for linker
+Xlinker="-Xlinker $(mpicxx --showme | tr ' ' '\n' | sed -n 's/^-Wl,//p' | paste -sd, -)"
+
+# Compile MPI code using nvcc
+nvcc -O3 -gencode arch=compute_80,code=sm_80 $Xcompiler $Xlinker test.cu -o test.x
+```
+
+### OpenMP offload and MPI+OpenMP offload
+
+For GPU programming with OpenMP offload use:
 ```bash
 module purge
 module use /appl/opt/nvhpc/modulefiles
-```
-
-Please note that this modification has implications on the consistency of the module tree, see CSC's user [documentation](https://docs.csc.fi/computing/compiling-mahti/#openacc-and-openmp-offloading) for more information.
-
-After this change you can load the Nivida nvhpc module:
-``` bash
 module load nvhpc-hpcx-cuda12/25.1
 ```
 
-On **Mahti**, the compiler commands (without MPI) for C, C++ and Fortran are `nvc`,
-`nvc++`, and `nvfortran`, and OpenMP offload support is enabled with
-`-mp=gpu -gpu=cc80` options, *i.e.*
+**Note!** This modification has implications on the consistency of the module tree,
+see [CSC documentation](https://docs.csc.fi/computing/compiling-mahti/#openacc-and-openmp-offloading) for more information.
 
-```
-nvc -o my_exe test.c -mp=gpu -gpu=cc80
-```
-or
-```
-nvc++ -o my_exe test.cpp -mp=gpu -gpu=cc80
-```
-or
-```
-nvfortran -o my_exe test.f90 -mp=gpu -gpu=cc80
+
+Compilation of OpenMP offload programs:
+```bash
+nvc -mp=gpu -O3 -gpu=cc80 test.c -o test.x
+nvc++ -mp=gpu -O3 -gpu=cc80 test.cpp -o test.x
+nvfortran -mp=gpu -O3 -gpu=cc80 test.F90 -o test.x
 ```
 
-For MPI codes, use the wrapper commands `mpicc`, `mpic++`, or `mpif90`
-
-### HIP
-
-In order to use HIP on **Mahti**, you need to reconfigure the module paths as follows:
-```
-module purge
-module use /projappl/project_2014370/spack-container/modules/Core
+Compilation of MPI + OpenMP offload programs works with the usual wrappers in this environment:
+```bash
+mpicc -mp=gpu -O3 -gpu=cc80 test.c -o test.x
+mpicxx -mp=gpu -O3 -gpu=cc80 test.cpp -o test.x
+mpif90 -mp=gpu -O3 -gpu=cc80 test.F90 -o test.x
 ```
 
-After this you can load the following modules:
-``` bash
-module load gcc/13.3.0 hip cuda
+
+## Running
+
+Programs need to be executed via the batch job system:
+```bash
+sbatch job.sh
+```
+The output of the job will be in the file `slurm-JOBID.out`. You can check the status of your jobs with `squeue --me` and kill possible hanging applications with `scancel JOBID`.
+
+The file job script `job.sh` contains both the resource request (comment header lines starting with `#SBATCH`)
+and the file is executed as a bash script in the allocation (lines starting with `#` are comments and ignored
+during bash execution). Examples are provided below.
+
+Note that you can override any of the options define in the `#SBATCH` header as command line options, for example:
+```bash
+sbatch --time=00:10:00 job.sh
 ```
 
-Then you can compile with hipcc, eg,
-```
-hipcc  --gpu-architecture=sm_80 -o hello hello.cpp
-```
-where `--gpu-architecture=sm_80` is required when compiling for A100.
+### Slurm reservations
 
-## Running in Mahti
+There is no dedicated slurm reservations on Mahti.
+See LUMI for available reservations.
 
-### Pure MPI
 
-In Mahti, programs need to be executed via the batch job system. A job running with 4 MPI tasks can be submitted with the following batch job script:
-```
+### CPU jobs
+
+Example `job.sh` for running MPI+OpenMP program reserving 1 node, 4 tasks per node, and 2 CPU core per task, i.e., 8 CPU cores within one node in total:
+
+```bash
 #!/bin/bash
-#SBATCH --job-name=example
-#SBATCH --account=project_2014370
+#SBATCH --job-name=test
+#SBATCH --account=project_2019219
 #SBATCH --partition=small
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=2
 #SBATCH --time=00:05:00
-#SBATCH --ntasks=4
 
-srun ./my_mpi_exe
+# Set the number of threads based on cpus-per-task
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
+
+# Place and bind threads to single hardware threads
+# Comment the following lines if binding is not desired
+export OMP_PLACES=cores
+export OMP_PROC_BIND=spread
+
+# Run the program
+srun ./prog.x
 ```
 
-Save the script *e.g.* as `job.sh` and submit it with `sbatch job.sh`.
-The output of job will be in file `slurm-xxxxx.out`. You can check the status of your jobs with `squeue -u $USER` and kill possible hanging applications with
-`scancel JOBID`.
+Rules of thumb for choosing the resources based on the parallelization type:
+- MPI only: `--ntasks-per-node=<number_of_mpi_tasks>` and `--cpus-per-task=1`
+- OpenMP only: `--ntasks-per-node=1` and `--cpus-per-task=<number_of_threads>`
+- MPI+OpenMP: `--ntasks-per-node=<number_of_mpi_tasks>` and `--cpus-per-task=<number_of_threads_per_mpi_task>`
 
-### Pure OpenMP
+Note that other ways might be reasonable in some cases too.
+Some of such cases will be discussed in the exercises.
 
-For pure OpenMP programs one should use only single tasks and specify the number of cores reserved
-for threading with `--cpus-per-task`.
-```
+
+### GPU jobs
+
+Example `job.sh` for running a GPU program reserving 1 NVIDIA A100 GPU:
+
+```bash
 #!/bin/bash
-#SBATCH --job-name=example
-#SBATCH --account=project_2014370
-#SBATCH --partition=small
-#SBATCH --time=00:05:00
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-
-srun ./my_omp_exe
-```
-
-### Hybrid MPI+OpenMP
-
-For hybrid MPI+OpenMP programs it is recommended to specify explicitly number of nodes, number of
-MPI tasks per node (pure OpenMP programs as special case with one node and one task per node),
-and number of cores reserved for threading. The number of nodes is specified with `--nodes`
-(for most of the exercises you should use only a single node), number of MPI tasks **per node**
-with `--ntasks-per-node`, and number of cores reserved for threading with `--cpus-per-task`.
-The actual number of threads is specified with `OMP_NUM_THREADS` environment variable.
-Simple job running with 4 MPI tasks and 4 OpenMP threads per MPI task can be submitted with
-the following batch job script:
-```
-#!/bin/bash
-#SBATCH --job-name=example
-#SBATCH --account=project_2014370
-#SBATCH --partition=medium
-#SBATCH --time=00:05:00
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=10
-#SBATCH --cpus-per-task=4
-
-# Set the number of threads based on --cpus-per-task
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-srun ./my_exe
-```
-
-When using only single node, one should use the `small` partition, *i.e.*
-```
-...
-#SBATCH --partition=small
-SBATCH --nodes=1
-...
-```
-
-### GPU programs
-
-When running GPU programs, few changes need to made to the batch job
-script. The `partition` is now different, and one
-must also request explicitly given number of GPUs with the
-`--gres=gpu:a100:ngpus` option. As an example, in order to use a
-single GPU with single MPI task and a single thread use:
-```
-#!/bin/bash
-#SBATCH --job-name=example
-#SBATCH --account=project_2014370
+#SBATCH --job-name=test
+#SBATCH --account=project_2019219
 #SBATCH --partition=gpusmall
 #SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:a100:1
 #SBATCH --time=00:05:00
 
-srun ./my_gpu_exe
+# Run the program
+srun ./prog.x
 ```
+
+Note that this script allocates also 2 CPU cores per task.
+These extra CPU cores are especially useful for OpenMP runtime.
+
+For multi-GPU jobs using MPI:
+- Change the number of MPI tasks and GPUs per node: `--ntasks-per-node=<number_of_mpi_tasks>` and `--gres=gpu:a100:<number_of_gpus>`
+
+
+### Interactive jobs
+
+Requesting an allocation:
+
+```bash
+salloc --account=project_2019219 --partition=small --nodes=1 --ntasks-per-node=1 --cpus-per-task=4 --time=00:30:00
+```
+
+Once the allocation is ready, you'll get a new shell on the login node.
+In this shell, `srun` will launch jobs within the allocation:
+```bash
+srun --ntasks-per-node=2 --cpus-per-task=2 ./prog.x
+```
+
+## Resources
+
+- [Mahti documentation](https://docs.csc.fi/computing/systems-mahti/)

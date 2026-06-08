@@ -21,7 +21,7 @@ The slides are available in
 ## Exercises
 
 - Feel free to fork this repository to work through the exercises.
-- [General exercise instructions](exercise-instructions.md)
+- General exercise instructions: [LUMI](README_LUMI.md) and [Mahti](README_Mahti.md)
 - Session-specific material linked in the schedule below
 
 ## Schedule (draft)
