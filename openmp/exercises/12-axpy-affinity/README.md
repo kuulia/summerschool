@@ -15,7 +15,7 @@ The [solution directory](solution/) contains a model solution and discussion on 
 
 ## Task: Improve the performance
 
-1. According to first touch policy, we need to do the initialization in parallel so that the arrays are allocated in each threads' NUMA domain.
+1. According to the first touch policy, we need to do the initialization in parallel so that the arrays are allocated in each threads' NUMA domain.
 
    Do you see any difference in execution time with different numbers of threads and different affinities?
 

@@ -14,8 +14,11 @@ Note for instructors: use `run*.sh` scripts to generate all the output files.
 
    Run with `$t` threads distributed across `$c` first cores on the node:
 
-       export OMP_PLACES=cores OMP_PROC_BIND=spread OMP_DISPLAY_AFFINITY=true OMP_NUM_THREADS=$t
-       srun -p test --exclusive --nodes=1 --ntasks-per-node=1 --cpus-per-task=$c -t 0:10:00 ./axpy.x 102400000
+       export OMP_NUM_THREADS=$t
+       export OMP_PLACES=cores
+       export OMP_PROC_BIND=spread
+
+       sbatch --cpus-per-task=$c job.sh
 
    Corresponding outputs from LUMI are in files `data/axpy-t$t-c$c.out`. Note also the thread affinities printed in the files.
 
