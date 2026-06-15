@@ -21,7 +21,7 @@ Questions can be copy-pasted e.g. to HackMD.
    C. All the MPI tasks within a communicator communicate along
       the chosen pattern
    D. Every process receives messages from every other process
-  
+
    A.
    B.
    C.
@@ -38,7 +38,7 @@ but are not true for collective communication in general
    B. Code is more compact
    C. MPI library can utilize special hardware
    D. MPI library can utilize efficient implementations
-  
+
    A.
    B.
    C.
@@ -53,7 +53,7 @@ user could implement the algorithm with p2p operations, the
 implementation in MPI library is most likely more
 optimal. Furthermore, supercomputers can have special hardware for
 collective operations, whose use requires lower level programming than
-MPI. 
+MPI.
 
 2. What is the outcome of the following code snippet when run with 4 processes?
    ```fortran
@@ -66,14 +66,14 @@ MPI.
    B. "2 2 2 2 2 2 2 2"
    C. "0 0 1 1 2 2 3 3"
    D. "0 1 2 3 0 1 2 3"
-  
+
    A.
    B.
    C.
    D.
 
 Correct: C
-  
+
 <!--
 SPDX-SnippetBegin
 
@@ -93,7 +93,7 @@ SPDX-Snippet CopyrightText: 2020 EPCC, The University of Edinburgh <https://www.
       if (1 == rank) printf("oddsum = %d\n", oddsum);
    }
    ```
-   
+
    A. evensum = 16, oddsum = 12
    B. evensum = 28, oddsum = 28
    C. evensum = 12, oddsum = 16
@@ -111,10 +111,10 @@ look like the correct answer is C!
 
 Although the reduction operation is called from different lines by
 different processes, they are an participating in **the same**
-reduction as the communicator is MPI_COMM_WORLD. 
+reduction as the communicator is MPI_COMM_WORLD.
 As a result, every process computes the sum of all the ranks which is
 28, the only difference is that even ranks store the result in
-evensum, odd ranks in oddsum. 
+evensum, odd ranks in oddsum.
 
 Although you often have all processes executing a reduction from the
 same line of code, there is no requirement to do this. In fact, as a
@@ -124,7 +124,7 @@ until all processes have called the routine. If you wanted to compute even
 and odd rank sums separately, you would need to split MPI_COMM_WORLD
 into two sub-communicators, one for even ranks and the other for odd,
 and call then reduction on this subcommunicaior.
-	
+
 <!--
 SPDX-SnippetEnd
 -->
