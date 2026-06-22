@@ -4,19 +4,19 @@
 # SPDX-License-Identifier: CC-BY-4.0
 
 title:  Input/Output (I/O) in HPC
-event:  CSC Summer School in High-Performance Computing 2025
+event:  CSC Summer School in High-Performance Computing 2026
 lang:   en
 ---
 
 # Common I/O use cases in HPC
 
-- Write simulation results on disk
-- Write full state of the simulation, eg. for visualization or as a checkpoint for continuing later
+- Write simulation results to disk
+- Write full state of the simulation, e.g. for visualization or as a checkpoint for continuing later
 - Read configuration files, input parameters, earlier checkpoint files...
 
 **Heavy I/O can become a bottleneck if not properly planned for!**
 
-- Example: Run of the climate simulation code `ICON` produces 700 TB of data, at rate of 100 MB/s (30-year model)
+- Example: A run of the climate simulation code `ICON` produces 700 TB of data, at a rate of 100 MB/s (30 years of simulated climate)
 - Mahti peak I/O has been measured at 1.5 GB/s per compute node
 
 <!-- ICON numbers obtained from JE. They correspond to a "recent" (2025) simulation for `ClimateDT` using 5km resolution.
@@ -43,7 +43,7 @@ Most Linux systems follow the POSIX standard:
 
 However, **strict POSIX semantics are not well suited for parallel I/O!**
 
-- Eg. "global consistency": writes must be immediately visible to all processes
+- E.g. "global consistency": writes must be immediately visible to all processes
 - Lustre is POSIX compliant. Parallel applications must work around the I/O limitations through smart implementations (MPI-IO)
 
 # Old school parallel I/O
@@ -77,10 +77,10 @@ MPI-IO essentially implements a scalable combination of these ideas.
 <div class="column">
 - Each process writes its local results to a separate file
 - Good bandwidth, easy to implement
-- Having many files makes data post process cumbersome
+- Having many files makes data postprocessing cumbersome
 - **Can overwhelm the filesystem!**
 
-  - Recall discussion of Lustre metadata servers
+  - Recall discussion of Lustre metadata servers on the first day
 </div>
 
 <div class="column">
@@ -122,11 +122,11 @@ while simulation_is_running:
 
 The "standard" I/O streams `stdout`, `stdin`, `stderr` are effectively **serial** in `mpirun`/`srun` context!
 
-- *Eg*: Default `srun` will redirect `stdout` of all processes to `stdout` of `srun`
+- Default `srun` will redirect `stdout` of all processes to `stdout` of `srun`
 - Avoid excessive debug prints in production runs
     - Separate "Debug" and "Release" builds if needed
 - **Do not** rely on standard streams for heavy I/O operations. Code for direct file I/O instead
-    - *Eg*: `fprintf` instead of `printf`
+    - E.g. `fprintf` instead of `printf`
 
 # Parallel I/O with MPI-IO {.section}
 
@@ -251,7 +251,7 @@ The most popular I/O libraries in HPC are **`HDF5`** and **`netCDF`**.
 # Using HDF5
 
 - Official programming API for `C`, `C++`, `f90`
-    - Quite verbose and abstract! Consult the docs: <https://support.hdfgroup.org/documentation/hdf5/latest/_r_m.html>
+    - Quite verbose and abstract! Consult the [HDF5 docs](https://support.hdfgroup.org/documentation/hdf5/latest/_r_m.html)
 - Python package: `h5py`. File read example:
 ```python
 import h5py
@@ -260,7 +260,7 @@ dataset_names = list(myFile .keys())
 dataset = myFile['some_dataset']          # Behaves like a NumPy array
 ```
 
-- HDF5 I/O is supported by many scientific software (`Paraview`, `Matlab`, ...)
+- HDF5 I/O is supported by many scientific softwares (`Paraview`, `Matlab`, ...)
 - Command line tools for investigating HDF5 files (`h5ls`, `h5dump`)
 
 <small>
@@ -272,7 +272,7 @@ See our self-study material on HDF5 API (bonus content)
 
 # Parallel I/O summary
 
-- Pay attention to your I/O logic in parallel programs - you don't want it becoming a bottleneck
+- Pay attention to your I/O logic in parallel programs — you don't want it becoming a bottleneck
 - MPI-IO provides parallelized replacements for standard I/O functions, and more
 - Utilize Lustre striping for better parallel I/O performance
 - Standard & optimized file formats and libraries exist for storing and manipulating large amounts of complicated data

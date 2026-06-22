@@ -35,7 +35,7 @@ The starting code has two global constants that you can adjust for testing:
 - The `doDebugPrint` boolean can be used to enable or disable printing of file contents for debugging purposes.
 Note that the debug prints are not very useful if `numElements` is very large. For this reason the starting code enables debug prints only if `numElements <= 100`.
 
-The provided `main` function calls both of the write functions and also reads and dumps contents of the written files. Use this "debug" output to check that your writes are correct.
+The provided `main` function calls both of the write functions and also reads and dumps contents of the written files. Use this "debug" output to check that your writes are correct. **NOTE** The debug reader assumes a binary file.
 
 **Example file contents** (when `numElements` is 32):
 - 4 MPI tasks:
@@ -59,7 +59,7 @@ Let's compare the I/O performance of the two implementations:
 - Repeat the time measurements a few times (eg. 5) by putting them in a loop, printing the timings on each iteration.
 
 Run and compare the timings. Which implementation is faster?
-- For `collective_write()`, you should notice that its first invocation is considerably slower than the consecutive calls. This is because the MPI-IO library has to initialize internal state on its first use.
+- You may notice that the first invocations of the writers are considerably slower than the consecutive calls. This is because the IO libraries tend to initialize some internal on first use.
 
 Then increase `numElements` to a larger value so that more data will be written. Recompile and run with varying number of MPI tasks.
 Try eg. the following combinations:

@@ -23,3 +23,5 @@ touch experiments/new_file
 lfs getstripe experiments/new_file
 ```
 
+Note that it is not psosible to change striping for existing files.
+You have to manually create a new file with the new striping settings and copy the contents there.

@@ -17,7 +17,7 @@ At the end of the parallel I/O section, the student should be able to
 
 ## Presentation slides
 
-The most recent presentation slides are available [here](https://csc-training.github.io/summerschool/?open=io).
+The most recent presentation slides are available [here](https://csc-training.github.io/summerschool/?open=parallel-io).
 
 ## Demo codes
 
