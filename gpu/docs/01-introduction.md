@@ -48,7 +48,7 @@ https://www.top500.org/statistics/treemaps/
 
 November 2005
 
-![](img/coprocessor_2005.png){.center width=100%}
+![](https://a3s.fi/summerschool/assets/images/top500_nov05.svg){.center width=100%}
 
 :::
 ::::::
@@ -67,7 +67,7 @@ https://www.top500.org/statistics/treemaps/
 
 November 2010
 
-![](img/coprocessor_2010.png){.center width=100%}
+![](https://a3s.fi/summerschool/assets/images/top500_nov10.svg){.center width=100%}
 
 :::
 ::::::
@@ -86,7 +86,7 @@ https://www.top500.org/statistics/treemaps/
 
 November 2015
 
-![](img/coprocessor_2015.png){.center width=100%}
+![](https://a3s.fi/summerschool/assets/images/top500_nov15.svg){.center width=100%}
 
 :::
 ::::::
@@ -105,7 +105,7 @@ https://www.top500.org/statistics/treemaps/
 
 November 2020
 
-![](img/coprocessor_2020.png){.center width=100%}
+![](https://a3s.fi/summerschool/assets/images/top500_nov20.svg){.center width=100%}
 
 :::
 ::::::
@@ -124,7 +124,7 @@ https://www.top500.org/statistics/treemaps/
 
 November 2025
 
-![](img/coprocessor_2025.png){.center width=100%}
+![](https://a3s.fi/summerschool/assets/images/top500_nov25.svg){.center width=100%}
 
 :::
 ::::::
