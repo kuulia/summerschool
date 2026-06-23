@@ -1,0 +1,50 @@
+========== slurm-n16-19461898.out ==========
+Simulation parameters: height: 960 width: 960 length: 960 time steps: 300
+Number of MPI tasks: 2048 (16 x 16 x 8)
+Number of OpenMP threads: 1
+Average temperature at start: 63.836582
+Iteration took 3.207301 seconds.
+  MPI           0.391788 s.
+  Compute       0.458115 s.
+Average temperature: 63.835413
+
+========== slurm-n2-19461883.out ==========
+Simulation parameters: height: 960 width: 960 length: 960 time steps: 300
+Number of MPI tasks: 256 (8 x 8 x 4)
+Number of OpenMP threads: 1
+Average temperature at start: 63.836582
+Iteration took 17.289084 seconds.
+  MPI           5.196818 s.
+  Compute       5.907539 s.
+Average temperature: 63.835413
+
+========== slurm-n4-19461895.out ==========
+Simulation parameters: height: 960 width: 960 length: 960 time steps: 300
+Number of MPI tasks: 512 (8 x 8 x 8)
+Number of OpenMP threads: 1
+Average temperature at start: 63.836582
+Iteration took 9.935390 seconds.
+  MPI           3.523513 s.
+  Compute       2.245864 s.
+Average temperature: 63.835413
+
+========== slurm-n8-19461896.out ==========
+Simulation parameters: height: 960 width: 960 length: 960 time steps: 300
+Number of MPI tasks: 1024 (16 x 8 x 8)
+Number of OpenMP threads: 1
+Average temperature at start: 63.836582
+Iteration took 5.586569 seconds.
+  MPI           1.604494 s.
+  Compute       1.013162 s.
+Average temperature: 63.835413
+
+========== slurm-scalability-19461872.out ==========
+Simulation parameters: height: 960 width: 960 length: 960 time steps: 300
+Number of MPI tasks: 128 (8 x 4 x 4)
+Number of OpenMP threads: 1
+Average temperature at start: 63.836582
+Iteration took 31.527600 seconds.
+  MPI           7.256294 s.
+  Compute       14.665611 s.
+Average temperature: 63.835413
+
