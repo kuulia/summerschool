@@ -19,8 +19,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (rank == size-1) {
-        printf("This is the last process (rank %d)!\n", rank);
-        printf("I'm the last but not least!\n");
+        printf("This is the last process (rank %d), I'm the last but not least!\n", rank);
     }
 
     
