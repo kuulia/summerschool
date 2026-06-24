@@ -14,7 +14,7 @@ SPDX-License-Identifier: CC-BY-4.0
    - Process with rank 0 prints the total number of MPI processes
    - Process with rank N-1 prints "I'm the last but not least"
    - Process with rank 42 prints ["I'm the Answer to the Ultimate Question of Life, the Universe, and Everything!"](https://simple.wikipedia.org/wiki/42_(answer))
-   Run the program with 0, 4, 42, and 64 processes and observe the output.
+   Run the program with 1, 4, 42, and 64 processes and observe the output.
 
 3. (Bonus) Sometimes it is convenient to find out in which nodes the different MPI
    processes are running. MPI has a function `MPI_Get_processor_name` for querying the

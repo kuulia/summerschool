@@ -12,7 +12,7 @@ lang:   en
 
 # Recap / quiz
 
-TODO: Menti access code / QR code
+Menti!
 
 # Outline
 
@@ -201,14 +201,12 @@ if (rank == 0) {
   MPI_Send(message, msgsize, MPI_INT,
            1, 42, MPI_COMM_WORLD);
   MPI_Recv(recvbuf, bufsize, MPI_INT,
-           1, 42, MPI_COMM_WORLD,
-           &status);
+           1, 42, MPI_COMM_WORLD, &status);
 } else if (rank == 1) {
   MPI_Send(message, msgsize, MPI_INT,
            0, 42, MPI_COMM_WORLD);
   MPI_Recv(recvbuf, bufsize, MPI_INT,
-           0, 42, MPI_COMM_WORLD,
-           &status);
+           0, 42, MPI_COMM_WORLD, &status);
 }
 ```
 </div>
@@ -224,8 +222,7 @@ src = (rank - 1 + ntasks) % ntasks;
 MPI_Send(message, msgsize, MPI_INT,
          dst, 42, MPI_COMM_WORLD);
 MPI_Recv(recvbuf, bufsize, MPI_INT,
-         src, 42, MPI_COMM_WORLD,
-         &status);
+         src, 42, MPI_COMM_WORLD, &status);
 ```
 </div>
 - **Note!** Clear code makes it clear that this code may deadlock!

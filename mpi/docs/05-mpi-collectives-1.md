@@ -12,7 +12,7 @@ lang:   en
 
 # Recap / quiz
 
-TODO: Menti access code / QR code
+Menti!
 
 # Outline
 

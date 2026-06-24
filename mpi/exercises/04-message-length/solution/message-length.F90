@@ -89,6 +89,7 @@ function randomMessageLength() result(randomInt)
     real :: randomReal
     integer :: randomInt
 
+    call random_init(.false., .false.)
     call random_number(randomReal)
     ! range [2, 10]
     randomInt = int(randomReal * 9.0) + 2

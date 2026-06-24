@@ -57,7 +57,7 @@ The slides are available in
 | 16:30 | Outdoor activity: Nuuksio Olympic Games (meetup at the Hotel lobby)
 | 18:00 | Dinner (available until 20:00)
 | 19:00 | Exercises (optional)
-| 20:00 | Saunas & refreshments at the lake
+| 20:00 | Saunas, grilling, and refreshments at the lake (sauna heater warm until 21:30)
 
 ### Day 3, Thu 25.6.
 
@@ -87,7 +87,7 @@ The slides are available in
 | 17:00 | Outdoor activity
 | 18:00 | Dinner (available until 20:00)
 | 19:00 | Exercises (optional)
-| 20:00 | Saunas & refreshments at the lake
+| 20:00 | Saunas, grilling, and refreshments at the lake (sauna heater warm until 21:30)
 
 ### Day 5, Sat 27.6.
 
@@ -132,7 +132,7 @@ The slides are available in
 | 17:00 | Outdoor activity
 | 18:00 | Dinner (available until 20:00)
 | 19:00 | Exercises (optional)
-| 20:00 | Saunas & refreshments at the lake
+| 20:00 | Saunas, grilling, and refreshments at the lake (sauna heater warm until 21:30)
 
 ### Day 8, Tue 30.6.
 

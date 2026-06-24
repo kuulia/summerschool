@@ -78,6 +78,7 @@ lang:   en
 <div class=column>
  ![](img/farm.svg){.center width=70%}
 <br>
+
 - Video processing pipeline with four stages
     - 1. a task is decoding frame N
     - 2. a task is applying filters to frame N-1
