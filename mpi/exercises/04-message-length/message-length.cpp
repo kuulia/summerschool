@@ -56,12 +56,18 @@ int main(int argc, char *argv[]) {
 
         const int sourceRank = 1;
 
-        // ... your code here ...
+        MPI_Status status;  // declare first
 
-        // Receive the message. Will error with MPI_ERR_TRUNCATE if the buffer is too small for the incoming message
+        // Pass &status so MPI_Probe fills it in
+        MPI_Probe(sourceRank, tag, MPI_COMM_WORLD, &status);
+
+        // Now status holds info about the pending message
+        MPI_Get_count(&status, MPI_INT, &messageLength);
+
+        receiveBuffer.resize(messageLength);
         MPI_Recv(receiveBuffer.data(), receiveBuffer.size(), MPI_INT,
-            sourceRank, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE
-        );
+            sourceRank, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
 
         printf("Rank 0: Received %d integers from rank 1.\n", messageLength);
         // Print the received numbers
