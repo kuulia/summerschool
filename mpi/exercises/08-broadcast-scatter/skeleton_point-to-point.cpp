@@ -42,9 +42,6 @@ int main(int argc, char *argv[])
     }
     MPI_Recv(buf.data() + rank * chunk, chunk, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
 
-    /* scatter solution */
-    // MPI_Scatter(buf.data(), buf_size / size, MPI_INT, buf.data(), buf_size / size, MPI_INT, 0, MPI_COMM_WORLD);
-
     /* End timing */
     double t1 = MPI_Wtime();
 

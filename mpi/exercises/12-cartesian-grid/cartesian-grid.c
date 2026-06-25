@@ -43,6 +43,7 @@ int main(int argc, char* argv[]) {
 
     /* Create the 2D Cartesian communicator */
     /* TODO */
+    
 
     /* Find out and store the neighboring ranks */
     /* TODO */

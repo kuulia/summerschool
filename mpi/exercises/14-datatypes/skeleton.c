@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     int array[8][8];
 
     // Declare a variable storing the MPI datatype
-    // TODO
+    MPI_Datatype columntype;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -44,14 +44,19 @@ int main(int argc, char **argv)
         }
     }
 
-    // Create datatype
-    // TODO
+    // Create datatype for a column: 8 blocks of 1 int, strided by 8
+    MPI_Type_vector(8, 1, 8, MPI_INT, &columntype);
+    MPI_Type_commit(&columntype);
 
-    // Send data from rank 0 to rank 1
-    // TODO
+    // Send column 1 from rank 0 to rank 1
+    if (rank == 0) {
+        MPI_Send(&array[0][1], 1, columntype, 1, 0, MPI_COMM_WORLD);
+    } else if (rank == 1) {
+        MPI_Recv(&array[0][1], 1, columntype, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    }
 
     // Free datatype
-    // TODO
+    MPI_Type_free(&columntype);
 
     // Print received data
     if (rank == 1) {
