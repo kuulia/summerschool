@@ -31,8 +31,21 @@ int main(int argc, char *argv[])
     MPI_Barrier(MPI_COMM_WORLD);
     double t0 = MPI_Wtime();
 
-    /* Send everywhere */
-    // TODO: Implement the broadcast of the array buf
+    /* point-to-point communication solution */
+    //
+    //MPI_Status status;
+    //if (rank == 0) {
+    //    printf("Starting broadcast of %i elements\n", buf_size);
+    //    for (int dest = 1; dest < size; dest++) {
+    //        MPI_Send(buf.data(), buf_size, MPI_INT, dest, 0, MPI_COMM_WORLD);
+    //    }
+    //} else {
+    //    MPI_Recv(buf.data(), buf_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+    //}
+
+
+    /* broadcast solution */
+    MPI_Bcast(buf.data(), buf_size, MPI_INT, 0, MPI_COMM_WORLD);
 
     /* End timing */
     double t1 = MPI_Wtime();

@@ -19,8 +19,8 @@
 #include <mpi.h>
 
 #define N_FOLDS    5
-#define N_LAM     12
-#define N_SIG     12
+#define N_LAM     24
+#define N_SIG     24
 #define FIXED_SIG  200.0   /* deliberately wide — 10x true sigma, so sequential search is visibly suboptimal */
 #define N_EVAL   500     /* points in the dense evaluation grid */
 #define X_LO    -12.0
