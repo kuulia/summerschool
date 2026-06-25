@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     print_buffers(sendbuf);
 
     /* Create new communicator and reduce the data */
-    if (rank / 2 == 0) {
+    if (rank < 2) {
         color = 1;
     } else {
         color = 2;
