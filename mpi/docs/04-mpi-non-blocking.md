@@ -25,7 +25,6 @@ lang:   en
     - Communication needs to be separately finalized
 - Enables some computing concurrently with communication
 - Avoids many common deadlock situations
-- Collective operations are also available as non-blocking versions
 
 # Non-blocking send
 
