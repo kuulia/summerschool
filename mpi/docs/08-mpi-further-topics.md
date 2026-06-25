@@ -84,6 +84,7 @@ call mpi_type_free(rowtype, ierr)
 - Often a communication with same argument list is repeatedly executed
 - Persistent communication enables opening a "communication port" for the repeated communication pattern
 - This can provide optimization opportunities for MPI library
+- Setup with `MPI_Send_init(...)` / `MPI_Recv_init(...)`, perform with `MPI_Start(...)` (nonblocking)
 
 # One-sided communication
 
