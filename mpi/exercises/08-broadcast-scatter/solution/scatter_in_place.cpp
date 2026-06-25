@@ -44,11 +44,11 @@ int main(int argc, char *argv[])
     if (rank == root) {
         // recvbuf = MPI_IN_PLACE -> recvcount and recvtype ignored
         MPI_Scatter(buf.data(), block_size, MPI_INT,
-                    MPI_IN_PLACE, 0, 0,
+                    MPI_IN_PLACE, 0, MPI_DATATYPE_NULL,
                     root, MPI_COMM_WORLD);
     } else {
         // sendbuf, sendcount, and sendtype significant only on root
-        MPI_Scatter(NULL, 0, 0,
+        MPI_Scatter(NULL, 0, MPI_DATATYPE_NULL,
                     buf.data(), block_size, MPI_INT,
                     root, MPI_COMM_WORLD);
     }

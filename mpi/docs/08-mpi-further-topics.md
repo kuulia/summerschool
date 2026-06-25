@@ -22,6 +22,7 @@ Menti!
 - Additional communication modes
   - Persistent communication
   - One-sided communication
+- Recent additions to the MPI standard
 
 # Process topologies {.section}
 
@@ -94,9 +95,37 @@ call mpi_type_free(rowtype, ierr)
 - Certain algorithms can be easier to implement with one-sided communication
 - Can potentially reduce synchronization overheads and provide better performance especially on recent hardware
 
+
+# Recent additions to the MPI standard {.section}
+
+# Evolution of the MPI standard
+
+- MPI is an evolving standard:
+  - Version 5.0 in 2025, 4.0 in 2021, 3.0 in 2015
+- New versions bring new features
+- However, HPC systems usually lag behind and may provide older implementations only
+  - LUMI default MPI follows version 3.1, but there is an unofficial installation that supports 4.1
+
+# Long-count variants, since MPI-4.0
+
+- Traditional `MPI_Send`, `MPI_Recv` have a subtle limit on how big messages it can handle: the `count` parameter is of (signed) `int` type!
+  - `int` is 32-bit on practically all platforms => maximum message length is $2^{31} - 1 = 2,147,483,647$ elements
+  - ~2 GB if sending `MPI_BYTE`, ~16 GB if sending `MPI_DOUBLE`
+  - Workaround: divide very long messages into many smaller ones
+- Modern MPI has separate **long-count variants:** `count` is of `MPI_Count` type (at least 64-bit)
+  - Instead of `MPI_Send`, `MPI_Recv` etc. you would use `MPI_Send_c`, `MPI_Recv_c`, ...
+
+# ABI compatibility, since MPI-5.0
+
+- ABI = Application Binary Interface
+- Standard now requires that different MPI implementations are ABI-compatible
+- Program compiled and linked for OpenMPI will Just Work (tm) also with MPICH
+
 # Summary {.section}
 
 # Summary
 
 - MPI is large standard and it has hundreds of procedures for different purposes
-- See the extra material
+- MPI is an evolving standard and new features are introduced from time to time
+  - Use with care: HPC systems may only provide older implementations
+- See our extra material (slides, exercises)

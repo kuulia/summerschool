@@ -49,6 +49,7 @@ MPI_Comm_split(`comm`{.input}, `color`{.input}, `key`{.input}, `newcomm`{.output
 
 <div class=column>
 ```c
+MPI_Comm subcomm;
 if (rank%2 == 0) {
     color = 1;
 } else {
@@ -89,6 +90,7 @@ I am rank 1 in MPI_COMM_WORLD, but 0 in Comm 2.
 <div class=column>
 <p>
 ```c
+MPI_Comm subcomm;
 if (rank%2 == 0) {
   color = 1;
 } else {
