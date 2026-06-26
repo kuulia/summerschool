@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
                 }
             }
 
-            // printf("Rank %02d recv from %02d\n", rank, source); fflush(stdout);
             MPI_Recv(buf.data(), buf_size, MPI_INT, source, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            // printf("Rank %02d recv from %02d\n", rank, source); fflush(stdout);
         }
 
         // Send to the power of 2 destinations in the block
@@ -74,8 +74,8 @@ int main(int argc, char *argv[])
     } else {
         // Odd ranks receive from previous rank (which is even)
         int source = rank - 1;
-        // printf("Rank %02d recv from %02d\n", rank, source); fflush(stdout);
         MPI_Recv(buf.data(), buf_size, MPI_INT, source, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        // printf("Rank %02d recv from %02d\n", rank, source); fflush(stdout);
     }
 
     /* End timing */

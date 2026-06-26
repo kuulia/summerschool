@@ -159,15 +159,15 @@ at middle of the grid but other shapes may be used via input files. A bottle
 is given as an example at [bottle.dat](../../../heat-shared/data/bottle.dat).
 
 Examples on how to run the binary:
-- `./heat`  (no arguments - the program will run with the default arguments:
+- `./heat_mpi`  (no arguments - the program will run with the default arguments:
              2000x2000 grid and 500 time steps)
-- `./heat bottle.dat` (one argument - start from a temperature grid provided
+- `./heat_mpi bottle.dat` (one argument - start from a temperature grid provided
                        in the file `bottle.dat` for the default number of time
                        steps)
-- `./heat bottle.dat 1000` (two arguments - will run the program starting from
+- `./heat_mpi bottle.dat 1000` (two arguments - will run the program starting from
                             a temperature grid provided in the file
                             `bottle.dat` for 1000 time steps)
-- `./heat 4000 8000 1000` (three arguments - will run the program in a
+- `./heat_mpi 4000 8000 1000` (three arguments - will run the program in a
                            4000x8000 grid for 1000 time steps)
 
 The program will produce an image (PNG) of the temperature field after every

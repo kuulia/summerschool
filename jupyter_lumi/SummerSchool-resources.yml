@@ -1,0 +1,5 @@
+cores: 4
+time: "01:00:00"
+partition: "small"
+mem: "16GB"
+working_dir: "/scratch/$PROJECT"

@@ -27,7 +27,7 @@ producing the characteristic fractal image.
 
 The provided serial example codes map each pixel to a point in the complex plane,
 computes the iteration count of the pixel, and stores it in an output array.
-The iteration counts are stored in a file `image.bin` that can be visualized with the Python script `plot.py`.
+The iteration counts are stored in a file `image.bin`.
 
 Three code variants of increasing complexity are provided:
 1. `mandelbrot-direct`: Computes the Mandelbrot set pixel by pixel, following [the algorithm exemplified in Wikipedia](https://en.wikipedia.org/wiki/Mandelbrot_set#Computer_drawings).
@@ -49,7 +49,12 @@ The [solution directory](solution/) contains a model solution and discussion on 
 
    What size images you can compute with the different serial codes in around ten seconds?
 
-   Use LUMI web interface to visualize the beautiful fractal images.
+   Use LUMI web interface to visualize the beautiful fractal images:
+   - Login to <https://www.lumi.csc.fi/>
+   - Launch Jupyter for courses app
+   - Choose course module: SummerSchool
+   - Click Launch
+   - In the jupyter instance, navigate to this directory and run the notebook `plot.ipynb`
 
 2. Parallelize the different variants using OpenMP. Let's start in a reverse order.
 

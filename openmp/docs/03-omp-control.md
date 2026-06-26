@@ -29,7 +29,7 @@ lang:   en
 
 # Execution control constructs
 
-**`barrier`**
+**`omp barrier`**
 
 - When a thread reaches a barrier it only continues after all the threads in
   the same thread team have reached it
@@ -43,7 +43,7 @@ lang:   en
 # Execution control constructs: a specific thread
 
 <div class=column>
-**`masked [ filter(id) ]`**
+**`omp masked [ filter(id) ]`**
 
 - Specifies a region that should be executed only by the thread of given id (0 by default without filter)
 - No implicit barrier at the end, *i.e.*, other threads do not wait
@@ -51,7 +51,7 @@ lang:   en
 
 
 <div class=column>
-**`master`**
+**`omp master`**
 
 - Like `masked`, but only for the thread id 0
 - Deprecated in OpenMP 5.1 and replaced with `masked`
@@ -59,24 +59,74 @@ lang:   en
 
 # Execution control constructs: any single thread
 
-**`single [ nowait ]`**
+**`omp single [ nowait ]`**
 
 - Specifies that a region should be executed only by a single (arbitrary) thread
 - Implicit barrier at the end, *i.e.*, other threads wait
 - Adding `nowait` removes the implicit barrier
 
 
+# Examples
+
+<div class=column>
+```c++
+#pragma omp parallel
+{
+  #pragma omp masked filter(0)
+  {
+    // This line is executed by thread 0 only
+    printf("Hello masked\n");
+  }
+
+  #pragma omp single
+  {
+    // This line is executed by any single thread
+    printf("Hello single\n");
+  } // implicit barrier!
+
+  // This line is executed by all threads
+  printf("Hello all\n");
+}
+```
+</div>
+
+<div class=column>
+```fortranfree
+!$omp parallel
+
+  !$omp masked filter(0)
+    ! This line is executed by thread 0 only
+    print *, "Hello masked"
+  !$omp end masked
+
+  !$omp single
+    ! This line is executed by any single thread
+    print *, "Hello single"
+  !$omp end single
+  ! implicit barrier!
+
+  ! This line is executed by all threads
+  print *, "Hello all"
+
+!$omp end parallel
+```
+</div>
+
+
+
+
+
 # Execution control constructs: one thread at a time
 
 <div class=column>
-**`critical`**
+**`omp critical`**
 
 - A section that is executed by only one thread at a time
 - No implicit barrier at the end
 </div>
 
 <div class=column>
-**`atomic`**
+**`omp atomic`**
 
 - Like `critical`, but strictly limited construct to update of a single value
 - Only guarantees atomic update, does not protect function calls

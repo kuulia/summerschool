@@ -16,9 +16,10 @@ SPDX-License-Identifier: CC-BY-4.0
 
 3. See `axpy-timed.{cpp,F90}`. Output with various thread counts in `axpy-timed-t*.out`.
 
-   Calculating axpy of a large array of 102400000 elements takes on LUMI takes about 60 ms with 1 to 16 threads.
+   Calculating axpy of a large array of 102400000 elements takes on LUMI takes about 62 ms with 1 thread,
+   60 ms with 2 threads, and it gets slower with 4, 8, and 16 threads.
 
-   This seems rather appalling performance improvement for such a code with independent loop iterations.
+   This seems rather appalling performance for such a code with independent loop iterations.
    The reason is two-fold: 1) the axpy operation is bound by the memory bandwidth and 2) the current
    code is not managing memory allocation well for high performance.
 
