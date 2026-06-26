@@ -116,9 +116,9 @@ int main(int argc, char* argv[])
     if (rank == 0) {
         double col_buf[N];
         for (int j = 0; j < N; j++) {          // iterate over columns
-            for (int j = 0; j < N; j++)
-                col_buf[j] = A_full[i*N+j];
-            int owner = i % nprocs;
+            for (int i = 0; i < N; i++)
+                col_buf[i] = A_full[i*N+j];
+            int owner = j % nprocs;
             MPI_Send(col_buf, N, MPI_DOUBLE, owner, 0, MPI_COMM_WORLD);
         }
     } else {
