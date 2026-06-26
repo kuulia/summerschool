@@ -28,5 +28,10 @@ The [solution directory](solution/) contains a model solution and discussion on 
        std::span<double> x(_x, n);  // this x behaves like std::vector for the purposes of this exercise
        ...
        free(_x);
+   
+   Note that `std::span` requires a C++20 compatible compiler. For some compilers you may have to manually specify the standard:
+      ```bash
+      g++ -Wall -O3 -std=c++20 -fopenmp axpy.cpp -o axpy
+      ```
 
-2. (Bonus for C++) Use C++ unique pointer to wrap the C-style malloc and free for automatic freeing of memory.
+3. (Bonus for C++) Use C++ unique pointer to wrap the C-style malloc and free for automatic freeing of memory.

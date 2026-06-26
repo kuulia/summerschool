@@ -214,7 +214,8 @@ Example `job.sh` for running MPI+OpenMP program reserving 1 node, 4 tasks per no
 #SBATCH --mem-per-cpu=1G
 #SBATCH --time=00:05:00
 
-# Set the number of threads based on cpus-per-task
+# Set the number of threads based on cpus-per-task, which Slurm stores in the SLURM_CPUS_PER_TASK environment variable.
+# The following bash syntax evaluates to 1 if --cpus-per-task was not given.
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
 
 # Place and bind threads to single hardware threads

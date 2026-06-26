@@ -17,7 +17,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 ### Execution control
 
-- [Execution control](04-execution-control/)
+- [Execution control](04-execution-controls/)
 
 ### Reduction
 
