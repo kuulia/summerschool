@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
+# This file is used in the generation of the web page
+title: Parallel Algorithms
+slidesdir: docs

@@ -9,6 +9,7 @@ modules:
   - intro-to-hpc
   - mpi
   - openmp
+  - algorithms
   - parallel-io
   - gpu
   - application-design-deployment

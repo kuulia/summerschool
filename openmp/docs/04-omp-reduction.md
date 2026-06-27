@@ -127,7 +127,7 @@ This is what happens under the hood:
 ```cpp
 dot = 0.0
 #pragma omp parallel \
-    shared(x,y,dot) reduction(+:dot)
+    shared(x,y) reduction(+:dot)
 {
   #pragma omp for
   for(int i = 0; i < n; i++) {
@@ -139,7 +139,7 @@ dot = 0.0
 <div class="column">
 ```fortranfree
 dot = 0.0
-!$omp parallel shared(x,y,dot) reduction(+:dot)
+!$omp parallel shared(x,y) reduction(+:dot)
   !$omp do
   do i = 1, n
     dot = dot + x(i)*y(i)

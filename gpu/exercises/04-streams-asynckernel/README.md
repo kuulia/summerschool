@@ -85,10 +85,17 @@ This generates a file with a suffix: `.pftrace`, under a directory `nidXXXX`.
 
 The directory identifier, `nidXXXX`, is based on the compute node you ran your program in.
 
-Copy the file to your local machine:
+Check that the folder and the `.pftrace` file exists:
 
 ```bash
-scp <your_username>@lumi.csc.fi:/scratch/project_462001452/<your_username>/hip-programming/streams/04-streams-asyncmemcopy/nidXXXX/<xyz_results.pftrace> .
+ls
+ls nid*
+```
+
+Open **a new terminal on your local machine**, and copy the file there to a folder of your choosing:
+
+```bash
+scp <your_username>@lumi.csc.fi:/scratch/project_462001452/<your_username>/summerschool/gpu/exercises/04-streams-asynckernel/nidXXXX/<xyz_results.pftrace> .
 ```
 
 Replace the `<your_username>`, `nidXXXX` and `<xyz_results.pftrace>` sections in the above.

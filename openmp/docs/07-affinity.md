@@ -182,8 +182,7 @@ Thread 003 affinity 3,7
   Process 250546 thread 000 affinity 4-7
   ...
   ```
-- Slurm configurations in other HPC centers can be very different
-  - Always experiment before production calculations!
+- Careful: Slurm configurations in other HPC centers can be very different
 
 
 # Summary {.section}

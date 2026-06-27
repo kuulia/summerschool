@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
 cores: 4
 time: "01:00:00"
 partition: "small"

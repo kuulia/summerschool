@@ -52,6 +52,13 @@ jobs:
           # TODO: PR to slidefactory
           bash tools/patch-index-open.sh build/index.html
 
+          # Fetch external slides
+          rm -rf build/*/algorithms/
+          mkdir -p build/pdf/algorithms/
+          wget https://a3s.fi/summerschool/assets/slides/parallel-algorithms.pdf -O build/pdf/algorithms/parallel-algorithms.pdf
+          sed -i 's|"html/algorithms/01-link.html"|"pdf/algorithms/parallel-algorithms.pdf"|g' build/index.html
+          sed -i 's|"pdf/algorithms/01-link.html"|"pdf/algorithms/parallel-algorithms.pdf"|g' build/index.html
+
       - name: Upload slide artifact
         uses: actions/upload-artifact@v7
         with:
