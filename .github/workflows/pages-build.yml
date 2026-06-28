@@ -59,6 +59,15 @@ jobs:
           sed -i 's|"html/algorithms/01-link.html"|"pdf/algorithms/parallel-algorithms.pdf"|g' build/index.html
           sed -i 's|"pdf/algorithms/01-link.html"|"pdf/algorithms/parallel-algorithms.pdf"|g' build/index.html
 
+          # Rezip with external slides
+          if [[ "$INCLUDE_PDF" == "true" ]]; then
+              cd build/pdf
+              rm ../slides.zip
+              # Zip with sorted file order
+              find . -mindepth 1 -type f -o -type d | sort | zip ../slides.zip -@
+              cd ../../
+          fi
+
       - name: Upload slide artifact
         uses: actions/upload-artifact@v7
         with:
