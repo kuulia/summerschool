@@ -86,6 +86,11 @@ int main() {
   b = (float *)malloc(N_bytes);
   c = (float *)malloc(N_bytes);
 
+  // Timing
+  float t_kernel_a_ms;
+  float t_kernel_b_ms;
+  float t_kernel_c_ms;
+
   // create three separate streams
   hipStream_t stream_a, stream_b, stream_c;
   HIP_ERRCHK(hipStreamCreate(&stream_a));
@@ -107,9 +112,23 @@ int main() {
   HIP_ERRCHK(hipMemcpyAsync(d_a, a, N_bytes, hipMemcpyHostToDevice, stream_a));
   HIP_ERRCHK(hipMemcpyAsync(d_b, b, N_bytes, hipMemcpyHostToDevice, stream_b));
   HIP_ERRCHK(hipMemcpyAsync(d_c, c, N_bytes, hipMemcpyHostToDevice, stream_c));
+
+  hipEvent_t start_kernel_event_a, start_kernel_event_b, start_kernel_event_c;
+  hipEvent_t stop_kernel_event_a, stop_kernel_event_b, stop_kernel_event_c;
+  HIP_ERRCHK(hipEventCreate(&start_kernel_event_a));
+  HIP_ERRCHK(hipEventCreate(&start_kernel_event_b));
+  HIP_ERRCHK(hipEventCreate(&start_kernel_event_c));
+  HIP_ERRCHK(hipEventCreate(&stop_kernel_event_a));
+  HIP_ERRCHK(hipEventCreate(&stop_kernel_event_b));
+  HIP_ERRCHK(hipEventCreate(&stop_kernel_event_c));
+  HIP_ERRCHK(hipEventRecord(start_kernel_event_a, stream_a));
   // Launch each kernel in a different stream
   kernel_a<<<gridsize, blocksize, 0, stream_a>>>(d_a, N);
   HIP_ERRCHK(hipGetLastError());
+  HIP_ERRCHK(hipEventRecord(start_kernel_event_a, stream_a));
+  HIP_ERRCHK(hipEventElapsedTime(&t_kernel_a_ms, start_kernel_event_a,
+                                 stop_kernel_event_a));
+  printf("kernel_a time: %f ms\n", t_kernel_a_ms);
 
   kernel_b<<<gridsize, blocksize, 0, stream_b>>>(d_b, N);
   HIP_ERRCHK(hipGetLastError());
