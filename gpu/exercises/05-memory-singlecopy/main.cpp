@@ -127,7 +127,7 @@ void unifiedMemNoCopy(int nSteps, int nx, int ny) {
   size_t size = nx * ny * sizeof(int);
 
   // TODO:   Allocate Unified Memory of size `size` for the pointer A
-
+  HIP_ERRCHK(hipMallocManaged((void **)&A, size));
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
   for (unsigned int i = 0; i < nSteps; i++) {
@@ -138,14 +138,17 @@ void unifiedMemNoCopy(int nSteps, int nx, int ny) {
      */
 
     // TODO:   Initialize array A to zeros on the device using hipMemset
+    HIP_ERRCHK(hipMemset(A, 0, size));
 
     // Launch GPU kernel
+    hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(A, nx, ny);
+    HIP_ERRCHK(hipGetLastError());
     // TODO:   Launch GPU kernel hipKernel
   }
   // TODO:   Prefetch data (A) from device to host
-
+  HIP_ERRCHK(hipMemPrefetchAsync(A, size, hipCpuDeviceId, 0));
   // TODO:   Synchronization
-
+  HIP_ERRCHK(hipStreamSynchronize(0));
   // Check results and print timings
   auto tStop = std::chrono::steady_clock::now();
   float timing =
@@ -153,6 +156,7 @@ void unifiedMemNoCopy(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "UnifiedMemNoCopy", timing);
 
   // TODO:   Free Unified Memory array (A)
+  HIP_ERRCHK(hipFree(A))
 }
 
 /* The main function */
@@ -165,5 +169,5 @@ int main(int argc, char *argv[]) {
 
   // Compare timing
   explicitMemNoCopy(nSteps, nx, ny);
-  // unifiedMemNoCopy(nSteps, nx, ny);
+  unifiedMemNoCopy(nSteps, nx, ny);
 }
