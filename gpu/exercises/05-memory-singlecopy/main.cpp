@@ -156,7 +156,7 @@ void unifiedMemNoCopy(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "UnifiedMemNoCopy", timing);
 
   // TODO:   Free Unified Memory array (A)
-  HIP_ERRCHK(hipFree(A))
+  HIP_ERRCHK(hipFree(A));
 }
 
 /* The main function */
