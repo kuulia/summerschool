@@ -1,0 +1,28 @@
+CompileFlags:
+  Add:
+    - -I/opt/rocm-6.3.4/include
+    - -I/opt/rocm-6.3.4/include/hip
+    - -I/usr/lib/x86_64-linux-gnu/openmpi/include
+    - -fopenmp
+    - -D__HIP_PLATFORM_AMD__
+    - -x
+    - hip
+    - -nogpulib
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+  Designators: Yes
+
+Diagnostics:
+  UnusedIncludes: Strict
+  MissingIncludes: Strict
+  ClangTidy:
+    Add:
+      - bugprone*
+      - performance*
+      - portability*
+
+Index:
+  Background: Build
