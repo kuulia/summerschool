@@ -182,7 +182,7 @@ void unifiedMem(int nSteps, int nx, int ny) {
   int *A;
   size_t size = nx * ny * sizeof(int);
 
-  // #error Allocate Unified Memory of size `size` for the pointer A
+  // TODO: Allocate Unified Memory of size `size` for the pointer A
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
@@ -197,9 +197,9 @@ void unifiedMem(int nSteps, int nx, int ny) {
     // Initialize array from host
     memset(A, 0, size);
 
-    // #error Launch GPU kernel hipKernel
+    // TODO: Launch GPU kernel hipKernel
 
-    // #error Synchronization
+    // TODO: Synchronization
   }
 
   // Check results and print timings
@@ -208,7 +208,7 @@ void unifiedMem(int nSteps, int nx, int ny) {
       std::chrono::duration<float, std::milli>(tStop - tStart).count();
   checkResults(A, nx, ny, "UnifiedMemNoPrefetch", timing);
 
-  // #error Free Unified Memory array (A)
+  // TODO: Free Unified Memory array (A)
 }
 
 /* Run using Unified Memory and prefetching */
@@ -217,12 +217,12 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
   const int gridsize = (nx * ny - 1 + BLOCKSIZE) / BLOCKSIZE;
 
   int device;
-  // #error Get device id number for prefetching
+  // TODO: Get device id number for prefetching
 
   int *A;
   size_t size = nx * ny * sizeof(int);
 
-  // #error Allocate Unified Memory of size `size` for the pointer A
+  // TODO: Allocate Unified Memory of size `size` for the pointer A
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
@@ -237,16 +237,16 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
     // Initialize array from host
     memset(A, 0, size);
 
-    // #error Prefetch data from host to device (A)
+    // TODO: Prefetch data from host to device (A)
 
-    // #error Launch GPU kernel hipKernel
+    // TODO: Launch GPU kernel hipKernel
 
-    // #error Synchronization
+    // TODO: Synchronization
   }
 
-  // #error Prefetch data from device to host (A)
+  // TODO: Prefetch data from device to host (A)
 
-  // #error Synchronization
+  // TODO: Synchronization
 
   // Check results and print timings
   auto tStop = std::chrono::steady_clock::now();
@@ -254,7 +254,7 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
       std::chrono::duration<float, std::milli>(tStop - tStart).count();
   checkResults(A, nx, ny, "UnifiedMemPrefetch", timing);
 
-  // #error Free Unified Memory array (A)
+  // TODO: Free Unified Memory array (A)
 }
 
 /* The main function */
