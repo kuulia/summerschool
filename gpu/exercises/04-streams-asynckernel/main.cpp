@@ -88,6 +88,9 @@ int main() {
 
   // create three separate streams
   hipStream_t stream_a, stream_b, stream_c;
+  HIP_ERRCHK(hipStreamCreate(&stream_a));
+  HIP_ERRCHK(hipStreamCreate(&stream_b));
+  HIP_ERRCHK(hipStreamCreate(&stream_c));
 
   // Device allocations
   HIP_ERRCHK(hipMalloc((void **)&d_a, N_bytes));
@@ -116,13 +119,13 @@ int main() {
 
   // Copy results back (in the default stream with hipMemCpy)
   // #error synchronize the host with stream A, before copying d_A back
-  hipStreamSynchronize(stream_a);
+  HIP_ERRCHK(hipStreamSynchronize(stream_a));
   HIP_ERRCHK(hipMemcpyAsync(a, d_a, N_bytes, hipMemcpyDeviceToHost, stream_a));
   // #error synchronize the host with stream B, before copying d_B back
-  hipStreamSynchronize(stream_b);
+  HIP_ERRCHK(hipStreamSynchronize(stream_b));
   HIP_ERRCHK(hipMemcpyAsync(b, d_b, N_bytes, hipMemcpyDeviceToHost, stream_b));
   // #error synchronize the host with stream C, before copying d_C back
-  hipStreamSynchronize(stream_c);
+  HIP_ERRCHK(hipStreamSynchronize(stream_c));
   HIP_ERRCHK(hipMemcpyAsync(c, d_c, N_bytes, hipMemcpyDeviceToHost, stream_c));
 
   for (int i = 0; i < 10; ++i)
