@@ -1,9 +1,8 @@
-<!--
-SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
-
-SPDX-License-Identifier: CC-BY-4.0
--->
 ---
+# SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: CC-BY-4.0
+
 title:  HPC application deployment & production
 event:  CSC Summer School in High-Performance Computing 2026
 lang:   en
