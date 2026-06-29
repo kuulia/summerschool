@@ -5,6 +5,7 @@ CompileFlags:
     - -I/usr/lib/x86_64-linux-gnu/openmpi/include
     - -fopenmp
     - -D__HIP_PLATFORM_AMD__
+    - -D__AMDGCN_WAVEFRONT_SIZE=64
     - -x
     - hip
     - -nogpulib
