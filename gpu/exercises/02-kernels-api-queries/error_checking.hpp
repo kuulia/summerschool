@@ -39,8 +39,7 @@ void launch_kernel(const char *kernel_name, const char *file, int32_t line,
     // immediately.
     if (num_bytes_shared_mem > max_shared_memory_per_block) {
         std::fprintf(stderr,
-                     "Shared memory request too large: %ld > %d, for kernel "
-                     "\"%s\" in %s on line %d\n",
+                     "Shared memory request too large: %ld > %d, for kernel \"%s\" in %s on line %d\n",
                      num_bytes_shared_mem, max_shared_memory_per_block,
                      kernel_name, file, line);
         exit(EXIT_FAILURE);
@@ -56,15 +55,52 @@ void launch_kernel(const char *kernel_name, const char *file, int32_t line,
         // The given threads.x is not within the correct limits.
         // Print error message and exit.
         // See above how it's done for the shared memory check.
+        std::fprintf(stderr,
+		"Threads.x out of bounds with value: %d \"%s\" in %s on line %d\n", threads.x, kernel_name, file, line);
+	exit(EXIT_FAILURE);
     }
-    // TODO: Do the same for y and z dimensions.
+    // Do the same for y and z dimensions.
+    const int max_threads_y = get_device_attribute(
+        hipDeviceAttribute_t::hipDeviceAttributeMaxBlockDimY);
+    if (threads.y <= 0 || max_threads_y < threads.y) {
+        // The given threads.y is not within the correct limits.
+        // Print error message and exit.
+        // See above how it's done for the shared memory check.
+        std::fprintf(stderr,
+                "Threads.y out of bounds with value: %d \"%s\" in %s on line %d\n", threads.y, kernel_name, file, line);
+        exit(EXIT_FAILURE);
+    }
+    const int max_threads_z = get_device_attribute(
+        hipDeviceAttribute_t::hipDeviceAttributeMaxBlockDimZ);
+    if (threads.z <= 0 || max_threads_z < threads.z) {
+        // The given threads.z is not within the correct limits.
+        // Print error message and exit.
+        // See above how it's done for the shared memory check.
+        std::fprintf(stderr,
+                "Threads.z out of bounds with value: %d \"%s\" in %s on line %d\n", threads.z, kernel_name, file, line);
+        exit(EXIT_FAILURE);
+    }
 
     // TODO: Do the same for all dimensions of grid size.
     // Hint: hipDeviceAttribute_t::hipDeviceAttributeMaxGridDimX
     // Compare againts the input argument 'dim3 blocks'
     // Similarly to blocks, also the grid sizes must be greater than zero in all
     // dimensions
+    const int max_grid_x = get_device_attribute(
+        hipDeviceAttribute_t::hipDeviceAttributeMaxGridDimX);
+    const int max_grid_y = get_device_attribute(
+        hipDeviceAttribute_t::hipDeviceAttributeMaxGridDimY);
+    const int max_grid_z = get_device_attribute(
+        hipDeviceAttribute_t::hipDeviceAttributeMaxGridDimZ);
 
+    if (blocks.x <= 0 || max_grid_x < blocks.x) {
+        // The given threads.z is not within the correct limits.
+        // Print error message and exit.
+        // See above how it's done for the shared memory check.
+        std::fprintf(stderr,
+                "blocks.x out of bounds with value: %d \"%s\" in %s on line %d\n", blocks.x, kernel_name, file, line);
+        exit(EXIT_FAILURE);
+    }
     // TODO: Finally make sure the total number of threads per block is less
     // than the maximum: i.e.
     // hipDeviceAttribute_t::hipDeviceAttributeMaxThreadsPerBlock >=
