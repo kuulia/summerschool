@@ -183,6 +183,7 @@ void unifiedMem(int nSteps, int nx, int ny) {
   size_t size = nx * ny * sizeof(int);
 
   // TODO: Allocate Unified Memory of size `size` for the pointer A
+  HIP_ERRCHK(hipMallocManaged((void **)&A, size));
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
@@ -198,8 +199,10 @@ void unifiedMem(int nSteps, int nx, int ny) {
     memset(A, 0, size);
 
     // TODO: Launch GPU kernel hipKernel
+    hipKernel<<<gridsize, BLOCKSIZE, size, 0>>>(A, nx, ny);
 
     // TODO: Synchronization
+    HIP_ERRCHK(hipStreamSynchronize(0));
   }
 
   // Check results and print timings
@@ -209,6 +212,7 @@ void unifiedMem(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "UnifiedMemNoPrefetch", timing);
 
   // TODO: Free Unified Memory array (A)
+  HIP_ERRCHK(hipFree(A));
 }
 
 /* Run using Unified Memory and prefetching */
@@ -268,6 +272,6 @@ int main(int argc, char *argv[]) {
   // Run with different memory management strategies
   explicitMem(nSteps, nx, ny);
   explicitMemPinned(nSteps, nx, ny);
-  // unifiedMem(nSteps, nx, ny);
+  unifiedMem(nSteps, nx, ny);
   // unifiedMemPrefetch(nSteps, nx, ny);
 }
