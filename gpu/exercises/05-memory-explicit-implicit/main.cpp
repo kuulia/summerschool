@@ -248,7 +248,7 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
     HIP_ERRCHK(hipMemPrefetchAsync(A, size, device, 0));
 
     // Launch GPU kernel hipKernel
-    hipKernel<<<gridsize, BLOCKSIZE, size, 0>>>(A, nx, ny);
+    hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(A, nx, ny);
     HIP_ERRCHK(hipGetLastError());
 
     // Synchronization
