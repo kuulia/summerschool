@@ -16,6 +16,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <hip/amd_detail/amd_hip_runtime.h>
+#include <hip/hip_runtime.h>
 
 // GPU kernel definition
 __global__ void kernel_a(float *a, int n) {
@@ -125,7 +127,7 @@ int main() {
   // Launch each kernel in a different stream
   kernel_a<<<gridsize, blocksize, 0, stream_a>>>(d_a, N);
   HIP_ERRCHK(hipGetLastError());
-  HIP_ERRCHK(hipEventRecord(start_kernel_event_a, stream_a));
+  HIP_ERRCHK(hipEventRecord(stop_kernel_event_a, stream_a));
   HIP_ERRCHK(hipEventElapsedTime(&t_kernel_a_ms, start_kernel_event_a,
                                  stop_kernel_event_a));
 
