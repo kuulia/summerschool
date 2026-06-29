@@ -69,7 +69,7 @@ int main() {
   // HIP_ERRCHK(hipMemcpy(d_a, a, N_bytes, hipMemcpyHostToDevice));
 
   // #error specify your stream at kernel launch
-  kernel<<<gridsize, blocksize, 0, 0>>>(d_a, N);
+  kernel<<<gridsize, blocksize, 0, stream>>>(d_a, N);
   HIP_ERRCHK(hipGetLastError());
 
   // #error replace hipMemcpy with its Async counterpart to copy data back to
