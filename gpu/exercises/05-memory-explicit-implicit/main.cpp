@@ -199,7 +199,8 @@ void unifiedMem(int nSteps, int nx, int ny) {
     memset(A, 0, size);
 
     // TODO: Launch GPU kernel hipKernel
-    hipKernel<<<gridsize, BLOCKSIZE, size, 0>>>(A, nx, ny);
+    hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(A, nx, ny);
+    HIP_ERRCHK(hipGetLastError());
 
     // TODO: Synchronization
     HIP_ERRCHK(hipStreamSynchronize(0));
