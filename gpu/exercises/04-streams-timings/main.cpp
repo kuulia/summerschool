@@ -128,7 +128,6 @@ int main() {
   HIP_ERRCHK(hipEventRecord(start_kernel_event_a, stream_a));
   HIP_ERRCHK(hipEventElapsedTime(&t_kernel_a_ms, start_kernel_event_a,
                                  stop_kernel_event_a));
-  printf("kernel_a time: %f ms\n", t_kernel_a_ms);
 
   kernel_b<<<gridsize, blocksize, 0, stream_b>>>(d_b, N);
   HIP_ERRCHK(hipGetLastError());
@@ -158,6 +157,8 @@ int main() {
   for (int i = 0; i < 10; ++i)
     printf("%f ", c[i]);
   printf("\n");
+
+  printf("kernel_a time: %f ms\n", t_kernel_a_ms);
   // Free device and host memory allocations
   HIP_ERRCHK(hipFree(d_a));
   HIP_ERRCHK(hipFree(d_b));
