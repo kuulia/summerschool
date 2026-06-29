@@ -74,7 +74,7 @@ int main() {
 
   // #error replace hipMemcpy with its Async counterpart to copy data back to
   // host using your stream
-  HIP_ERRCHK(hipMemcpyAsync(d_a, a, N_bytes, hipMemcpyDeviceToHost, stream));
+  HIP_ERRCHK(hipMemcpyAsync(a, d_a, N_bytes, hipMemcpyDeviceToHost, stream));
 
   // #error synchronize the host with your stream, before continuing
   HIP_ERRCHK(hipStreamSynchronize(stream));
