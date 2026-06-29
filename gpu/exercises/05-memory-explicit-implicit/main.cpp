@@ -221,13 +221,15 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
   // Determine grid size
   const int gridsize = (nx * ny - 1 + BLOCKSIZE) / BLOCKSIZE;
 
-  int device;
   // TODO: Get device id number for prefetching
+  int device;
+  HIP_ERRCHK(hipGetDevice(&device));
 
   int *A;
   size_t size = nx * ny * sizeof(int);
 
-  // TODO: Allocate Unified Memory of size `size` for the pointer A
+  // Allocate Unified Memory of size `size` for the pointer A
+  HIP_ERRCHK(hipMallocManaged((void **)&A, size));
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
@@ -243,16 +245,21 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
     memset(A, 0, size);
 
     // TODO: Prefetch data from host to device (A)
+    HIP_ERRCHK(hipMemPrefetchAsync(A, size, device, 0));
 
-    // TODO: Launch GPU kernel hipKernel
+    // Launch GPU kernel hipKernel
+    hipKernel<<<gridsize, BLOCKSIZE, size, 0>>>(A, nx, ny);
+    HIP_ERRCHK(hipGetLastError());
 
-    // TODO: Synchronization
+    // Synchronization
+    HIP_ERRCHK(hipStreamSynchronize(0));
   }
 
   // TODO: Prefetch data from device to host (A)
+  HIP_ERRCHK(hipMemPrefetchAsync(A, size, hipCpuDeviceId, 0));
 
   // TODO: Synchronization
-
+  HIP_ERRCHK(hipStreamSynchronize(0));
   // Check results and print timings
   auto tStop = std::chrono::steady_clock::now();
   float timing =
@@ -260,6 +267,7 @@ void unifiedMemPrefetch(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "UnifiedMemPrefetch", timing);
 
   // TODO: Free Unified Memory array (A)
+  HIP_ERRCHK(hipFree(A));
 }
 
 /* The main function */
@@ -274,5 +282,5 @@ int main(int argc, char *argv[]) {
   explicitMem(nSteps, nx, ny);
   explicitMemPinned(nSteps, nx, ny);
   unifiedMem(nSteps, nx, ny);
-  // unifiedMemPrefetch(nSteps, nx, ny);
+  unifiedMemPrefetch(nSteps, nx, ny);
 }
