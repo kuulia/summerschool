@@ -117,10 +117,10 @@ void explicitMem(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "ExplicitMemCopy", timing);
 
   // Free device dA
-  HIP_ERRCHK(hipFree(&d_A))
+  HIP_ERRCHK(hipFree(&d_A));
 
   // Free host array (A)
-  free(A)
+  free(A);
 }
 
 /* Run using explicit memory management and pinned host allocations */
