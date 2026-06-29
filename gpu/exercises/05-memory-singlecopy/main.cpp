@@ -60,6 +60,8 @@ void warmupRun(int nSteps, int nx, int ny) {
     HIP_ERRCHK(hipMemset(d_A, 0, bytes));
     // Launch GPU kernel
     // TODO:   Launch GPU kernel hipKernel
+    hipKernel<<<gridsize, blocksize, 0, 0>>>(d_A, nx, ny);
+    HIP_ERRCHK(hipGetLastError());
   }
 
   // Synchronization
@@ -78,10 +80,10 @@ void explicitMemNoCopy(int nSteps, int nx, int ny) {
   size_t size = nx * ny * sizeof(int);
 
   // TODO:   Allocate pageable host memory of size `size` for the pointer A
-  HIP_ERRCHK(hipHostMalloc((void **)A, size));
+  HIP_ERRCHK(hipHostMalloc((void **)&A, size));
 
   // TODO:   Allocate device memory (d_A)
-  HIP_ERRCHK(hipMalloc((void **)d_A, size));
+  HIP_ERRCHK(hipMalloc((void **)&d_A, size));
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
@@ -110,7 +112,7 @@ void explicitMemNoCopy(int nSteps, int nx, int ny) {
   checkResults(A, nx, ny, "ExplicitMemNoCopy", timing);
 
   // TODO:   Free device array (d_A)
-  HIP_ERRCHK(hipFree(d_A));
+  HIP_ERRCHK(hipHostFree(d_A));
 
   // TODO:   Free host array (A)
   HIP_ERRCHK(hipFree(A));
