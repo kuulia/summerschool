@@ -143,7 +143,6 @@ void unifiedMemNoCopy(int nSteps, int nx, int ny) {
     // Launch GPU kernel
     hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(A, nx, ny);
     HIP_ERRCHK(hipGetLastError());
-    // TODO:   Launch GPU kernel hipKernel
   }
   // TODO:   Prefetch data (A) from device to host
   HIP_ERRCHK(hipMemPrefetchAsync(A, size, hipCpuDeviceId, 0));
