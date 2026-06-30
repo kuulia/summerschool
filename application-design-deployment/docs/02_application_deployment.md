@@ -60,7 +60,7 @@ lang:   en
    - 14 supercomputers
    - 10 quantum computers
 
-<img src="images/EuroHPC_Members_Map.png" align="right" width=47%/>
+<img data-src="images/EuroHPC_Members_Map.png" align="right" width=47%/>
 </div>
 
 
