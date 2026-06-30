@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <mpi.h>
-#include <hip/hip_runtime.h>
 #include <cstdio>
+#include <hip/hip_runtime.h>
+#include <mpi.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
   MPI_Init(&argc, &argv);
 
@@ -19,33 +19,40 @@ int main(int argc, char* argv[]) {
   int processor_name_length;
   MPI_Get_processor_name(processor_name, &processor_name_length);
 
-  int num_devices = 0; 
+  int num_devices = 0;
   int my_device = -1;
 
   int node_rank;
-  // TODO (part b) obtain node local rank by creating "SHARED" communicator 
+  // TODO (part b) obtain node local rank by creating "SHARED" communicator
   MPI_Comm node_comm;
 
   // TODO (part a) query number of devices to num_devices
+  hipGetDeviceCount(&num_devices);
+
   // TODO (part b) set different device for each local MPI rank
+  my_device = node_rank % num_devices;
+  if (num_devices > 0) {
+    hipSetDevice(my_device);
+  }
 
   if (0 == rank) {
     printf("Total number of MPI processes: %d\n", size);
     printf("Number of GPUs per node: %d\n", num_devices);
   }
 
-// Try to print in synchronized manner
-  for (int i=0; i < size; i++) {
+  // Try to print in synchronized manner
+  for (int i = 0; i < size; i++) {
     if (rank == i) {
-      printf("Global rank: %d in node %s Local rank: %d using GPU id %d out of %d devices\n",
+      printf("Global rank: %d in node %s Local rank: %d using GPU id %d out of "
+             "%d devices\n",
              rank, processor_name, node_rank, my_device, num_devices);
       fflush(stdout);
     }
-    
+
     MPI_Barrier(MPI_COMM_WORLD);
   }
 
   MPI_Finalize();
-  
+
   return 0;
 }

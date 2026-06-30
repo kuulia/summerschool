@@ -1,6 +1,6 @@
 ---
 If:
-  PathMatch: .*/gpu/exercises/.*-omp-.*\.(cpp|cc)$
+  PathMatch: gpu/exercises/.*-omp-.*\.(cpp|cc)$
 CompileFlags:
   Add:
     - -I/opt/rocm-6.3.4/include
@@ -10,18 +10,16 @@ CompileFlags:
     - -fopenmp-targets=amdgcn-amd-amdhsa
 ---
 If:
-  PathMatch: .*/gpu/exercises/.*\.(cpp|cc|cu)$
+  PathMatch: gpu/exercises/.*\.(cpp|cc|cu)$
 CompileFlags:
   Add:
     - -I/opt/rocm-6.3.4/include
     - -I/opt/rocm-6.3.4/include/hip
     - -I/usr/lib/x86_64-linux-gnu/openmpi/include
     - -I/usr/lib/gcc/x86_64-linux-gnu/13/include
-    - -fopenmp
     - -D__HIP_PLATFORM_AMD__
     - -D__AMDGCN_WAVEFRONT_SIZE=64
-    - -x
-    - hip
+    - -xhip
     - -nogpulib
 ---
 CompileFlags:
