@@ -203,6 +203,12 @@ def emit_kernel_body(lines, base_indent=1):
 # Code generation from parsed tree
 # ----------------------------------------------------------------------
 
+HIPPY_BLOCKS = """\
+inline int hippy_blocks(int n, int threads = 256) {
+    return (n + threads - 1) / threads;
+}
+"""
+
 GPU_BUFFER_TEMPLATE = """\
 template<typename T>
 struct GPUBuffer {
@@ -233,10 +239,6 @@ struct GPUBuffer {
 
     operator T*() { return ptr; }
 };
-
-inline int hippy_blocks(int n, int threads = 256) {
-    return (n + threads - 1) / threads;
-}
 """
 
 TYPE_MAP = {
@@ -535,6 +537,7 @@ def generate(tree, source_name, explicit_mem=False):
     out.append("")
     if not explicit_mem:
         out.append(GPU_BUFFER_TEMPLATE)
+    out.append(HIPPY_BLOCKS)
     if consts_cpp:
         out.append("// ---- constants ----")
         out.extend(consts_cpp)
