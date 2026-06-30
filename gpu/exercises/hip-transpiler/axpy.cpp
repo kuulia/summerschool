@@ -44,6 +44,13 @@ int main() {
 
     {
         const int _n = N < 8 ? N : 8;
+        printf("x:");
+        for (int _i = 0; _i < _n; _i++) printf(" %g", h_x[_i]);
+        if (N > _n) printf(" ...");
+        printf("\n");
+    }
+    {
+        const int _n = N < 8 ? N : 8;
         printf("y:");
         for (int _i = 0; _i < _n; _i++) printf(" %g", h_y[_i]);
         if (N > _n) printf(" ...");

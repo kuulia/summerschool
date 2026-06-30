@@ -11,4 +11,4 @@ buffer float a, x(N), y(N)
 upload x, y
 launch axpy(N)(a, x, y, n)
 download y
-print y
+print x, y
