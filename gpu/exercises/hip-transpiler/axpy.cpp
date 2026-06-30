@@ -9,13 +9,12 @@ inline int hippy_blocks(int n, int threads = 256) {
 
 // ---- constants ----
 constexpr int N = 1024;
-constexpr int n = 256;
 
 // ---- kernels ----
 
-__global__ void axpy(float a, float* x, float* y, int n) {
+__global__ void axpy(float a, float* x, float* y, int N) {
     int i = (blockIdx.x * blockDim.x + threadIdx.x);  // TODO: hippy guessed 'int' for i; fix the type if wrong
-    if (i < n) {
+    if (i < N) {
         y[i] += a * x[i];
     }
 }
@@ -36,7 +35,7 @@ int main() {
     HIP_ERRCHK(hipMemcpy(d_x, h_x, N * sizeof(float), hipMemcpyHostToDevice));
     HIP_ERRCHK(hipMemcpy(d_y, h_y, N * sizeof(float), hipMemcpyHostToDevice));
 
-    axpy<<<hippy_blocks(N, 256), 256>>>(a, d_x, d_y, n);
+    axpy<<<hippy_blocks(N, 256), 256>>>(a, d_x, d_y, N);
     HIP_ERRCHK(hipGetLastError());
     HIP_ERRCHK(hipDeviceSynchronize());
 
