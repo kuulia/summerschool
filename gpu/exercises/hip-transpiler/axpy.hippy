@@ -1,5 +1,5 @@
 const int N = 1024
-const int n = N
+const int n = 256
 
 kernel axpy(a: float, x: float*, y: float*, n: int):
     i = global_index()
