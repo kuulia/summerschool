@@ -41,6 +41,7 @@ int main() {
 
     HIP_ERRCHK(hipMemcpy(h_y, d_y, N * sizeof(float), hipMemcpyDeviceToHost));
 
+    printf("a = %g\n", a);
     {
         const int _show = 4;
         printf("x:");
