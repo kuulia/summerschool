@@ -1,0 +1,9 @@
+kernel add_vectors(a: float*, b: float*, c: float*, n: int):
+    i = global_index()
+    if i < n:
+        c[i] = a[i] + b[i]
+
+buffer float a(N), b(N), c(N)
+upload a, b
+launch add_vectors(N)(a, b, c, n)
+download c

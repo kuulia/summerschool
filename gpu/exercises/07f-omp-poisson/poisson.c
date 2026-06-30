@@ -11,7 +11,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #else
-#include "fake_omp.h"
+#include <fake_omp.h>
 #endif
 
 #include "helper_functions.h"

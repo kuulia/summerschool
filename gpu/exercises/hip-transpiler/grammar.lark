@@ -1,0 +1,46 @@
+// hippy grammar — minimal DSL that scaffolds HIP C++
+//
+// Note: kernel bodies are NOT parsed structurally by this grammar.
+// We only need lark to find the *extent* of an indented block (so we
+// know where the kernel ends), then we hand the raw lines to a
+// separate Python translator. This keeps the grammar simple and avoids
+// fighting the lexer over what counts as a "line of C++-ish code".
+
+start: item+
+
+item: kernel_def
+    | buffer_decl
+    | upload_stmt
+    | download_stmt
+    | launch_stmt
+
+// ---- kernel definition ----
+// kernel name(param: type, param: type, ...):
+//     <python-ish body, copied through with light translation>
+kernel_def: KERNEL_HEADER _INDENT kernel_body _DEDENT
+
+kernel_body: BODY_LINE+
+
+// ---- buffer declaration ----
+// buffer float a(N), b(N), c(N)
+buffer_decl: BUFFER_LINE
+
+// ---- upload / download ----
+upload_stmt: UPLOAD_LINE
+download_stmt: DOWNLOAD_LINE
+
+// ---- launch ----
+// launch kernel_name(N)(arg, arg, ...)
+// launch kernel_name(N, threads=256)(arg, arg, ...)
+launch_stmt: LAUNCH_LINE
+
+KERNEL_HEADER: /kernel[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*\([^\n]*\)[ \t]*:[ \t]*\n/
+BUFFER_LINE: /buffer[ \t]+[^\n]+\n/
+UPLOAD_LINE: /upload[ \t]+[^\n]+\n/
+DOWNLOAD_LINE: /download[ \t]+[^\n]+\n/
+LAUNCH_LINE: /launch[ \t]+[^\n]+\n/
+BODY_LINE: /[ \t]+[^\n]*\n/
+BLANK_LINE: /[ \t]*\n/
+
+%ignore BLANK_LINE
+%declare _INDENT _DEDENT

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include "../error_checking.hpp"
 #include <cstdio>
 #include <hip/hip_runtime.h>
 #include <mpi.h>
@@ -27,12 +28,12 @@ int main(int argc, char *argv[]) {
   MPI_Comm node_comm;
 
   // TODO (part a) query number of devices to num_devices
-  hipGetDeviceCount(&num_devices);
+  HIP_ERRCHK(hipGetDeviceCount(&num_devices));
 
   // TODO (part b) set different device for each local MPI rank
   my_device = node_rank % num_devices;
   if (num_devices > 0) {
-    hipSetDevice(my_device);
+    HIP_ERRCHK(hipSetDevice(my_device));
   }
 
   if (0 == rank) {
