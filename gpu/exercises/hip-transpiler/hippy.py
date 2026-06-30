@@ -328,6 +328,24 @@ def _add_type_suffix(val, elem_type):
     return val
 
 
+def _split_assignments(s):
+    """Split on commas, ignoring commas inside parentheses (e.g. linspace(a, b))."""
+    parts, depth, current = [], 0, []
+    for ch in s:
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+        if ch == ',' and depth == 0:
+            parts.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        parts.append(''.join(current).strip())
+    return parts
+
+
 def gen_init(line, buffer_info):
     """Generate host-side declarations from 'init name=val, name=val, ...'"""
     line = line.strip()
@@ -336,7 +354,7 @@ def gen_init(line, buffer_info):
         return f"// TODO: could not parse init line: {line}"
 
     out = []
-    for assign in m.group(1).split(","):
+    for assign in _split_assignments(m.group(1)):
         assign = assign.strip()
         if "=" not in assign:
             out.append(f"// TODO: could not parse init assignment: {assign}")
@@ -348,15 +366,21 @@ def gen_init(line, buffer_info):
             continue
 
         elem_type, size = buffer_info[name]
-        val_typed = _add_type_suffix(val, elem_type)
 
         if size is None:
             # scalar — simple variable declaration
-            out.append(f"{elem_type} {name} = {val_typed};")
+            out.append(f"{elem_type} {name} = {_add_type_suffix(val, elem_type)};")
         else:
-            # array — host allocation + fill loop
             out.append(f"{elem_type} h_{name}[{size}];")
-            out.append(f"for (int i = 0; i < {size}; i++) h_{name}[i] = {val_typed};")
+            ls = re.match(r"^linspace\(\s*(.+?)\s*,\s*(.+?)\s*\)$", val)
+            if ls:
+                start = _add_type_suffix(ls.group(1), elem_type)
+                end   = _add_type_suffix(ls.group(2), elem_type)
+                out.append(f"for (int i = 0; i < {size}; i++)"
+                           f" h_{name}[i] = {start} + i * ({end} - {start}) / ({size} - 1);")
+            else:
+                fill = _add_type_suffix(val, elem_type)
+                out.append(f"for (int i = 0; i < {size}; i++) h_{name}[i] = {fill};")
 
     return "\n".join(out)
 

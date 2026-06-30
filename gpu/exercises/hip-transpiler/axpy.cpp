@@ -16,17 +16,17 @@ constexpr int n = N;
 __global__ void axpy(float a, float* x, float* y, int n) {
     int i = (blockIdx.x * blockDim.x + threadIdx.x);  // TODO: hippy guessed 'int' for i; fix the type if wrong
     if (i < n) {
-        y[i] = a * x[i];
+        y[i] += a * x[i];
     }
 }
 
 // ---- host code ----
 int main() {
-    float a = 2.0f;
+    float a = 3.0f;
     float h_x[N];
-    for (int i = 0; i < N; i++) h_x[i] = 1.0f;
+    for (int i = 0; i < N; i++) h_x[i] = 0.0f + i * (1.0f - 0.0f) / (N - 1);
     float h_y[N];
-    for (int i = 0; i < N; i++) h_y[i] = 0.0f;
+    for (int i = 0; i < N; i++) h_y[i] = 0.0f + i * (100.0f - 0.0f) / (N - 1);
 
     float *d_x = nullptr;
     HIP_ERRCHK(hipMalloc(&d_x, N * sizeof(float)));
