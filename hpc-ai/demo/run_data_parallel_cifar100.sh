@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Hossein Firooz (Aalto University) and CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
 #!/bin/bash
 #SBATCH --job-name=data_parallel_cifar100
 #SBATCH --account=project_462001452

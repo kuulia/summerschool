@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Hossein Firooz (Aalto University) and CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
 import torch
 from torchvision.models import resnet152
 from fvcore.nn import FlopCountAnalysis, parameter_count_table

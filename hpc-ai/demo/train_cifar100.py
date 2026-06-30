@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Hossein Firooz (Aalto University) and CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
 import torch
 import torch.nn as nn
 import torch.optim as optim

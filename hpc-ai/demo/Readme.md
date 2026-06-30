@@ -1,6 +1,12 @@
+<!--
+SPDX-FileCopyrightText: 2026 Hossein Firooz (Aalto University) and CSC - IT Center for Science Ltd. <www.csc.fi>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Demo
 
-In this demo, we study image classification with the [CIFAR100](https://www.cs.toronto.edu/~kriz/cifar.html) dataset. [This image](./img/cifar100.jpg) is a sample of what the dataset looks like. The dataset has 100 classes containing 600 images each; 500 images per class is in the training set.
+In this demo, we study image classification with the [CIFAR100](https://www.cs.toronto.edu/~kriz/cifar.html) dataset. [This image](https://a3s.fi/summerschool/assets/images/hpc-ai/demo/cifar100.jpg) is a sample of what the dataset looks like. The dataset has 100 classes containing 600 images each; 500 images per class is in the training set.
 
 We will train a CNN model called [ResNet152](https://docs.pytorch.org/vision/main/models/generated/torchvision.models.resnet152.html). This model has over 60M parameters to train.
 
