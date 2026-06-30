@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
     alpha = 3.0;
     for (int i = 0; i < n; i++) {
       double frac = 1.0 / ((double)(n - 1));
-      x[i] = i * frac;
-      y[i] = i * frac * 100;
+      _x[i] = i * frac;
+      _y[i] = i * frac * 100;
     }
 
     // Print input values
