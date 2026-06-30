@@ -1,5 +1,5 @@
 # Number of elements in the vectors
-const int N = 1024
+const int N = 10000
 
 # GPU kernel: computes y = a*x + y for each element in parallel
 kernel axpy(a: float, x: float*, y: float*, N: int):

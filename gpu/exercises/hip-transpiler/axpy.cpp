@@ -8,7 +8,7 @@ inline int hippy_blocks(int n, int threads = 256) {
 }
 
 // ---- constants ----
-constexpr int N = 1024;
+constexpr int N = 10000;
 
 // ---- kernels ----
 
