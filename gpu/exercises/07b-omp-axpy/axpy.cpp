@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
   double alpha;
   std::vector<double> x(n), y(n);
   double *_x = x.data();
-  double *_y = x.data();
+  double *_y = y.data();
 
 #pragma omp target data map(alloc : _x[0 : n]) map(from : _y[0 : n])
   {
