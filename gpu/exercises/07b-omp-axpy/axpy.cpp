@@ -20,10 +20,11 @@ int main(int argc, char *argv[]) {
   double *_x = x.data();
   double *_y = x.data();
 
-#pragma omp target data map(to : _x[0 : n]) map(tofrom : _y[0 : n])
+#pragma omp target data map(alloc : _x[0 : n]) map(from : _y[0 : n])
   {
     // Initialization
     alpha = 3.0;
+#pragma omp target teams distribute parallel for
     for (int i = 0; i < n; i++) {
       double frac = 1.0 / ((double)(n - 1));
       _x[i] = i * frac;
@@ -33,13 +34,13 @@ int main(int argc, char *argv[]) {
     // Print input values
     printf("Input:\n");
     printf("a = %8.4f\n", alpha);
+#pragma omp target update from(_x[0 : n]) from(_y[0 : n])
     print_array("x", x);
     print_array("y", y);
 
     // Calculate axpy
     // TODO: Add OpenMP directives for GPU execution
-#pragma omp target
-#pragma omp teams distribute parallel for
+#pragma omp target teams distribute parallel for
     for (int i = 0; i < n; i++) {
       _y[i] += alpha * _x[i];
     }
