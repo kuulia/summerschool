@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Ethan van Woerkom (University of Helsinki)
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 slides.pdf:
 PDF version of slides.typ compiled with Typst and Touying Slides Package.
 

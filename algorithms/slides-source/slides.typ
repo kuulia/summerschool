@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Ethan van Woerkom (University of Helsinki)
+//
+// SPDX-License-Identifier: CC-BY-4.0
+
 #import "@preview/touying:0.7.3": *
 #import themes.simple: *
 
