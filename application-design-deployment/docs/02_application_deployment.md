@@ -102,7 +102,7 @@ lang:   en
 </div>
 
 <div class=column style=width:56%>
-<img src="images/EuroHPC_Regular_Access_cycle_2026.png" align=left width=100%/>
+<img data-src="images/EuroHPC_Regular_Access_cycle_2026.png" align=left width=100%/>
 </div>
 
 
