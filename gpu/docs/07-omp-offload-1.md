@@ -63,67 +63,49 @@ lang:   en
 
 # Example: CUDA/HIP vs OpenMP offload
 
-::::::{.columns}
 :::{.column}
-<small>
 **HIP**
 
 ```cpp
-__global__ void axpy(float alpha, float* x, float* y, int n) {
+__global__
+void axpy(float a, float* x, float* y, int n) {
   int i = blockDim.x * blockId.x + threadId.x;
   if (i > n) {
-    y[i] += alpha * x[i];
+    y[i] += a * x[i];
   }
 }
-
 int main() {
-  // Host side preparations
   ...
-
-  // Transfer data from host to device
   hipMemcpy(d_x, x, N_bytes, hipMemcpyDefault);
   hipMemcpy(d_y, y, N_bytes, hipMemcpyDefault);
-  // Execute kernel on device
-  axpy<<<griddim, blockdim>>(alpha, d_x, d_y, n)
-  // Wait for device to finish
+  axpy<<<griddim, blockdim>>(a, d_x, d_y, n)
   hipDeviceSynchronize();
-  // Transfer data from device to host
   hipMemcpy(y, d_y, N_bytes, hipMemcpyDefault);
-  // Calculated y is now available on host
   ...
 }
 ```
-</small>
 :::
 :::{.column}
-<small>
 **OpenMP offload**
 
 ```cpp
 int main() {
-  // Host side preparations
   ...
-
   // Declare data mapping
-  // - to: copy from host to device at the beginning
-  // - from: copy from device to host at the end
-  #pragma omp target data map(to:x[0:n]) map(tofrom:y[0:n])
+  #pragma omp target data \
+      map(to:x[0:n]) map(tofrom:y[0:n])
   {
     // Execute kernel on device
-    #pragma omp target teams distribute parallel for
+    #pragma omp target
+    #pragma omp teams distribute parallel for
     for (int i = 0; i < n; i++) {
-      y[i] += alpha * x[i];
+      y[i] += a * x[i];
     }
-    // Host waits device to finish implictly by default
   }
-
-  // Calculated y is now available on host
   ...
 }
 ```
-</small>
 :::
-::::::
 
 
 # OpenMP constructs for GPU programming {.section}
@@ -174,9 +156,9 @@ int main() {
 
 - Target construct does not create any parallelism, so additional constructs are needed
 - OpenMP `teams` and `parallel` constructs *generate parallelism*
-  - For example, `parallel` creates multiple threads (that do the same computation by default)
+  - `teams` and `parallel` create multiple teams and threads (that do the same computation by default)
 - OpenMP `distribute` and `for`/`do` constructs *distribute work* so that the created teams and threads do different work
-  - For example, `for`/`do` assign different threads to different loop iterations (so that the computation work is distributed)
+  - `distribute` and `for`/`do` assign different teams and threads to different loop iterations (so that the computation work is distributed)
 - Note the similarity to the OpenMP threading!
 
 
