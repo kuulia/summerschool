@@ -252,6 +252,7 @@ BUFFER_ITEM_RE = re.compile(r"([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)")
 LAUNCH_LINE_RE = re.compile(
     r"launch\s+([A-Za-z_]\w*)\s*\(([^()]*)\)\s*\((.*)\)\s*$"
 )
+INIT_LINE_RE = re.compile(r"init\s+(.+)$")
 
 
 def parse_params(param_str):
@@ -286,6 +287,76 @@ def gen_kernel(kernel_def_node):
     out.extend(cpp_body)
     out.append("}")
     return "\n".join(out), name, [n for n, _ in params]
+
+
+def gen_const(line):
+    """'const int N = 1024' -> 'constexpr int N = 1024;' at global scope."""
+    body = line.strip()[len("const"):].strip()
+    return f"constexpr {body};"
+
+
+def parse_buffer_info(line):
+    """Return {name: (elem_type, size_or_None)} for every item on a buffer line."""
+    line = line.strip()
+    m = BUFFER_LINE_RE.match(line)
+    if not m:
+        return {}
+    type_tok, rest = m.group(1), m.group(2)
+    cpp_type = TYPE_MAP.get(type_tok, type_tok)
+    elem_type = cpp_type.replace("*", "")
+
+    info = {}
+    for item in re.split(r",\s*", rest.strip()):
+        item = item.strip()
+        if not item:
+            continue
+        am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)$", item)
+        sm = re.match(r"^([A-Za-z_]\w*)$", item)
+        if am:
+            info[am.group(1)] = (elem_type, am.group(2))
+        elif sm:
+            info[sm.group(1)] = (elem_type, None)
+    return info
+
+
+def _add_type_suffix(val, elem_type):
+    """Append C++ literal suffix so float 1.0 doesn't silently become double."""
+    if elem_type == "float" and re.match(r"^[0-9]*\.?[0-9]+([eE][+-]?[0-9]+)?$", val):
+        return val + "f"
+    return val
+
+
+def gen_init(line, buffer_info):
+    """Generate host-side declarations from 'init name=val, name=val, ...'"""
+    line = line.strip()
+    m = INIT_LINE_RE.match(line)
+    if not m:
+        return f"// TODO: could not parse init line: {line}"
+
+    out = []
+    for assign in m.group(1).split(","):
+        assign = assign.strip()
+        if "=" not in assign:
+            out.append(f"// TODO: could not parse init assignment: {assign}")
+            continue
+        name, val = (s.strip() for s in assign.split("=", 1))
+
+        if name not in buffer_info:
+            out.append(f"// TODO: init {name} = {val}  — not found in buffer; declare manually")
+            continue
+
+        elem_type, size = buffer_info[name]
+        val_typed = _add_type_suffix(val, elem_type)
+
+        if size is None:
+            # scalar — simple variable declaration
+            out.append(f"{elem_type} {name} = {val_typed};")
+        else:
+            # array — host allocation + fill loop
+            out.append(f"{elem_type} h_{name}[{size}];")
+            out.append(f"for (int i = 0; i < {size}; i++) h_{name}[i] = {val_typed};")
+
+    return "\n".join(out)
 
 
 def gen_buffer_decl(line):
@@ -343,16 +414,31 @@ def gen_launch(line):
 
 
 def generate(tree, source_name):
+    consts_cpp = []
     kernels_cpp = []
     main_body = []
 
+    # First pass: collect buffer type/size info needed by gen_init
+    buffer_info = {}
+    for item in tree.children:
+        node = item.children[0]
+        if node.data == "buffer_decl":
+            buffer_info.update(parse_buffer_info(str(node.children[0])))
+
+    has_init = any(item.children[0].data == "init_stmt" for item in tree.children)
+
+    # Second pass: generate code in source order
     for item in tree.children:
         node = item.children[0]
         if node.data == "kernel_def":
             cpp, kname, params = gen_kernel(node)
             kernels_cpp.append(cpp)
+        elif node.data == "const_decl":
+            consts_cpp.append(gen_const(str(node.children[0])))
         elif node.data == "buffer_decl":
             main_body.append(gen_buffer_decl(str(node.children[0])))
+        elif node.data == "init_stmt":
+            main_body.append(gen_init(str(node.children[0]), buffer_info))
         elif node.data == "upload_stmt":
             main_body.append(gen_upload(str(node.children[0])))
         elif node.data == "download_stmt":
@@ -368,13 +454,17 @@ def generate(tree, source_name):
     out.append("#include <cstdlib>")
     out.append("")
     out.append(GPU_BUFFER_TEMPLATE)
-    out.append("")
+    if consts_cpp:
+        out.append("// ---- constants ----")
+        out.extend(consts_cpp)
+        out.append("")
     out.append("// ---- kernels ----")
     out.append("")
     out.extend(kernels_cpp)
     out.append("")
     out.append("// ---- host code ----")
-    out.append("// TODO: declare and fill your host-side arrays (h_a, h_b, ...) before this point")
+    if not has_init:
+        out.append("// TODO: declare and fill your host-side arrays (h_a, h_b, ...) before this point")
     out.append("int main() {")
     for block in main_body:
         for line in block.split("\n"):

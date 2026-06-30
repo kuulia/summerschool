@@ -9,7 +9,9 @@
 start: item+
 
 item: kernel_def
+    | const_decl
     | buffer_decl
+    | init_stmt
     | upload_stmt
     | download_stmt
     | launch_stmt
@@ -25,6 +27,14 @@ kernel_body: BODY_LINE+
 // buffer float a(N), b(N), c(N)
 buffer_decl: BUFFER_LINE
 
+// ---- compile-time constants (emitted at global scope before main) ----
+// const int N = 1024
+const_decl: CONST_LINE
+
+// ---- init (host-side initialization) ----
+// init name = value, name = value, ...
+init_stmt: INIT_LINE
+
 // ---- upload / download ----
 upload_stmt: UPLOAD_LINE
 download_stmt: DOWNLOAD_LINE
@@ -35,7 +45,9 @@ download_stmt: DOWNLOAD_LINE
 launch_stmt: LAUNCH_LINE
 
 KERNEL_HEADER: /kernel[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*\([^\n]*\)[ \t]*:[ \t]*\n/
+CONST_LINE: /const[ \t]+[^\n]+\n/
 BUFFER_LINE: /buffer[ \t]+[^\n]+\n/
+INIT_LINE: /init[ \t]+[^\n]+\n/
 UPLOAD_LINE: /upload[ \t]+[^\n]+\n/
 DOWNLOAD_LINE: /download[ \t]+[^\n]+\n/
 LAUNCH_LINE: /launch[ \t]+[^\n]+\n/
