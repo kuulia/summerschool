@@ -1,9 +1,8 @@
-<!--
-SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
-
-SPDX-License-Identifier: CC-BY-4.0
--->
 ---
+# SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: CC-BY-4.0
+
 title:  HPC application deployment & production
 event:  CSC Summer School in High-Performance Computing 2026
 lang:   en
@@ -304,9 +303,6 @@ srun -n 1 my_code --version > job_version_$SLURM_JOBID
     - Code, modules, job parameters
     - Expected result/behaviour
     - What is abnormal
-
-
-# Quiz?
 
 
 # Conclusions 

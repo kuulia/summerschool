@@ -2,36 +2,36 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <cmath>
 #include <cstdio>
-#include <omp.h>
+#include <cmath>
 #include <string>
+#include <omp.h>
 
-int main(int argc, char *argv[]) {
-  // Array size
-  int n = 1000000;
-  if (argc > 1) {
-    n = std::stoi(argv[1]);
-  }
-  printf("Array size: %d\n", n);
+int main(int argc, char* argv[])
+{
+    // Array size
+    int n = 100000;
+    if (argc > 1) {
+        n = std::stoi(argv[1]);
+    }
+    printf("Array size: %d\n", n);
 
-  // Start timing
-  double t0 = omp_get_wtime();
+    // Start timing
+    double t0 = omp_get_wtime();
 
-  // Calculate sum
-  double total = 0;
-#pragma omp parallel
-#pragma omp for
-  for (int i = 0; i < n; i++) {
-#pragma omp atomic
-    total += std::sin(static_cast<double>(i));
-  }
+    // Calculate sum
+    double total = 0;
+    #pragma omp parallel
+    #pragma omp for
+    for (int i = 0; i < n; i++) {
+        total += std::sin(static_cast<double>(i));
+    }
 
-  // End timing
-  double t1 = omp_get_wtime();
+    // End timing
+    double t1 = omp_get_wtime();
 
-  printf("Sum: %f\n", total);
-  printf("Calculation took %.3f milliseconds\n", (t1 - t0) * 1e3);
+    printf("Sum: %f\n", total);
+    printf("Calculation took %.3f milliseconds\n", (t1 - t0) * 1e3);
 
-  return 0;
+    return 0;
 }

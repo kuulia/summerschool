@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: 2026 CSC - IT Center for Science Ltd. <www.csc.fi>
 //
 // SPDX-License-Identifier: MIT
+
 #include <hip/hip_runtime.h>
 #include <stdio.h>
 #include <assert.h>
+
+// This file contains the kernel launch macro
 #include "error_checking.hpp"
 
 __global__ void hello(int32_t num_blocks, int32_t num_threads) {
@@ -29,7 +32,7 @@ int main(int argc, char **argv) {
 
     // TODO: Wrap this kernel launch with the kernel launch macro, then compile
     // and run the program with different arguments.
-    LAUNCH_KERNEL(hello, dim3(num_blocks), dim3(num_threads), 0, nullptr);
+    hello<<<num_blocks, num_threads>>>(num_blocks, num_threads);
 
     [[maybe_unused]] const auto result = hipDeviceSynchronize();
 

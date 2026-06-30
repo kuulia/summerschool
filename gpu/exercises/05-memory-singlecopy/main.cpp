@@ -9,19 +9,21 @@
  * - initialize memory directly on the device using hipMemset()
  * - compare explicit memory management against unified memory
  */
-#include "error_checking.hpp"
-#include <chrono>
 #include <cstdio>
 #include <cstring>
+#include <chrono>
 #include <string>
+#include "error_checking.hpp"
 
 /* Blocksize divisible by the warp size */
 #define BLOCKSIZE 64
 
 /* GPU kernel definition */
-__global__ void hipKernel(int *const A, const int nx, const int ny) {
+__global__ void hipKernel(int* const A, const int nx, const int ny)
+{
   const int idx = blockIdx.x * blockDim.x + threadIdx.x;
-  if (idx < nx * ny) {
+  if (idx < nx * ny)
+  {
     const int i = idx % nx;
     const int j = idx / nx;
     A[j * nx + i] += idx;
@@ -29,23 +31,24 @@ __global__ void hipKernel(int *const A, const int nx, const int ny) {
 }
 
 /* Auxiliary function to check the results */
-void checkResults(int *const A, const int nx, const int ny,
-                  const std::string strategy, const float timing_ms) {
+void checkResults(int* const A, const int nx, const int ny, const std::string strategy, const float timing_ms)
+{
   // Check that the results are correct
   int errored = 0;
-  for (unsigned int i = 0; i < nx * ny; i++)
-    if (A[i] != i)
+  for(unsigned int i = 0; i < nx * ny; i++)
+    if(A[i] != i)
       errored = 1;
 
   // Indicate if the results are correct
-  if (errored)
+  if(errored)
     printf("The results are incorrect!\n");
   else
     printf("The results are OK! (%.3f ms - %s)\n", timing_ms, strategy.c_str());
 }
 
 /* Run without timing as a warmup */
-void warmupRun(int nSteps, int nx, int ny) {
+void warmupRun(int nSteps, int nx, int ny)
+{
   // Determine grid and block size
   const int blocksize = BLOCKSIZE;
   const int gridsize = (nx * ny - 1 + blocksize) / blocksize;
@@ -54,14 +57,13 @@ void warmupRun(int nSteps, int nx, int ny) {
 
   int *d_A;
   // Allocate device memory
-  HIP_ERRCHK(hipMalloc((void **)&d_A, bytes));
+  HIP_ERRCHK(hipMalloc((void**)&d_A, bytes));
 
-  for (unsigned int i = 0; i < nSteps; i++) {
+  for(unsigned int i = 0; i < nSteps; i++)
+  {
     HIP_ERRCHK(hipMemset(d_A, 0, bytes));
     // Launch GPU kernel
-    // TODO:   Launch GPU kernel hipKernel
-    hipKernel<<<gridsize, blocksize, 0, 0>>>(d_A, nx, ny);
-    HIP_ERRCHK(hipGetLastError());
+    #error Launch GPU kernel hipKernel
   }
 
   // Synchronization
@@ -70,96 +72,89 @@ void warmupRun(int nSteps, int nx, int ny) {
   HIP_ERRCHK(hipFree(d_A));
 }
 
-/* Run using explicit memory management without recurring host/device memcopies
- */
-void explicitMemNoCopy(int nSteps, int nx, int ny) {
+/* Run using explicit memory management without recurring host/device memcopies */
+void explicitMemNoCopy(int nSteps, int nx, int ny)
+{
   // Determine grid size
   const int gridsize = (nx * ny - 1 + BLOCKSIZE) / BLOCKSIZE;
 
   int *A, *d_A;
   size_t size = nx * ny * sizeof(int);
 
-  // TODO:   Allocate pageable host memory of size `size` for the pointer A
-  HIP_ERRCHK(hipHostMalloc((void **)&A, size));
+  #error Allocate pageable host memory of size `size` for the pointer A
 
-  // TODO:   Allocate device memory (d_A)
-  HIP_ERRCHK(hipMalloc((void **)&d_A, size));
+  #error Allocate device memory (d_A)
 
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
-  for (unsigned int i = 0; i < nSteps; i++) {
+  for(unsigned int i = 0; i < nSteps; i++)
+  {
     /* The order of calls inside this loop represent an optimal
      * workflow of a GPU accelerated program where all operations
      * are performed using device (i.e., recurring memcopy is avoided):
      * Initializing the array directly on the GPU and running a GPU kernel.
      */
 
-    // TODO:   Initialize array A to zeros on the device using hipMemset
-    HIP_ERRCHK(hipMemset(d_A, 0, size));
+    #error Initialize array A to zeros on the device using hipMemset
 
     // Launch GPU kernel
     hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(d_A, nx, ny);
     HIP_ERRCHK(hipGetLastError());
   }
 
-  // TODO:   Copy data back to host (d_A to A)
-  HIP_ERRCHK(hipMemcpy(A, d_A, size, hipMemcpyDeviceToHost));
+  #error Copy data back to host (d_A to A)
 
   // Check results and print timings
   auto tStop = std::chrono::steady_clock::now();
-  float timing =
-      std::chrono::duration<float, std::milli>(tStop - tStart).count();
+  float timing = std::chrono::duration<float, std::milli>(tStop - tStart).count();
   checkResults(A, nx, ny, "ExplicitMemNoCopy", timing);
 
-  // TODO:   Free device array (d_A)
-  HIP_ERRCHK(hipHostFree(d_A));
+  #error Free device array (d_A)
 
-  // TODO:   Free host array (A)
-  HIP_ERRCHK(hipFree(A));
+  #error Free host array (A)
 }
 
 /* Run using Unified Memory without recurring host/device memcopies */
-void unifiedMemNoCopy(int nSteps, int nx, int ny) {
+void unifiedMemNoCopy(int nSteps, int nx, int ny)
+{
   // Determine grid size
   const int gridsize = (nx * ny - 1 + BLOCKSIZE) / BLOCKSIZE;
 
   int *A;
   size_t size = nx * ny * sizeof(int);
 
-  // TODO:   Allocate Unified Memory of size `size` for the pointer A
-  HIP_ERRCHK(hipMallocManaged((void **)&A, size));
+  #error Allocate Unified Memory of size `size` for the pointer A
+
   // Start timer and begin stepping loop
   auto tStart = std::chrono::steady_clock::now();
-  for (unsigned int i = 0; i < nSteps; i++) {
+  for(unsigned int i = 0; i < nSteps; i++)
+  {
     /* The order of calls inside this loop represent an optimal
      * workflow of a GPU accelerated program where all operations
      * are performed using device (i.e., recurring memcopy is avoided):
      * Initializing the array directly on the GPU and running a GPU kernel.
      */
 
-    // TODO:   Initialize array A to zeros on the device using hipMemset
-    HIP_ERRCHK(hipMemset(A, 0, size));
+    #error Initialize array A to zeros on the device using hipMemset
 
     // Launch GPU kernel
-    hipKernel<<<gridsize, BLOCKSIZE, 0, 0>>>(A, nx, ny);
-    HIP_ERRCHK(hipGetLastError());
+    #error Launch GPU kernel hipKernel
   }
-  // TODO:   Prefetch data (A) from device to host
-  HIP_ERRCHK(hipMemPrefetchAsync(A, size, hipCpuDeviceId, 0));
-  // TODO:   Synchronization
-  HIP_ERRCHK(hipStreamSynchronize(0));
+  #error Prefetch data (A) from device to host
+
+  #error Synchronization
+
   // Check results and print timings
   auto tStop = std::chrono::steady_clock::now();
-  float timing =
-      std::chrono::duration<float, std::milli>(tStop - tStart).count();
+  float timing = std::chrono::duration<float, std::milli>(tStop - tStart).count();
   checkResults(A, nx, ny, "UnifiedMemNoCopy", timing);
 
-  // TODO:   Free Unified Memory array (A)
-  HIP_ERRCHK(hipFree(A));
+  #error Free Unified Memory array (A)
 }
 
 /* The main function */
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
   // Set the number of steps and 2D grid dimensions
   int nSteps = 100, nx = 8000, ny = 2000;
 

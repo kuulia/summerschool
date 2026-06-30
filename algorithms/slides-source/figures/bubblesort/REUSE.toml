@@ -1,0 +1,6 @@
+version = 1
+
+[[annotations]]
+path = ["*.pdf"]
+SPDX-FileCopyrightText = "2026 Ethan van Woerkom (University of Helsinki)"
+SPDX-License-Identifier = "CC-BY-4.0"

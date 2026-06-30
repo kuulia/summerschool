@@ -6,7 +6,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # Avoiding recurring host-device memory transfers
 
-Previously in [exercise 1](../01-explicit-vs-implicit/README.md), data was repeatedly:
+Previously in [the explicit vs. implicit exercise](../05-memory-explicit-implicit/README.md), data was repeatedly:
 
 - initialized on the CPU
 - transferred to the GPU

@@ -40,15 +40,6 @@ int main(int argc, char *argv[])
      *       use a single collective communication call
      *       (and maybe prepare some parameters for the call)
      */
-    if (rank == 0 || rank == 1) {
-        color = 0;
-    } else {
-        color = 1;
-    }
-
-    MPI_Comm_split(MPI_COMM_WORLD, color, rank, &sub_comm);
-    MPI_Reduce(sendbuf.data(), recvbuf.data(), sendbuf.size(), MPI_INT, MPI_SUM, 0, sub_comm);
-
 
     /* Print data that was received */
     print_buffers(recvbuf);

@@ -12,14 +12,14 @@
  *   - destroy the stream
  */
 
-#include "error_checking.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <hip/hip_runtime.h>
+#include "error_checking.hpp"
 
 // GPU kernel definition
-__global__ void kernel(float *a, int n) {
+__global__ void kernel(float *a, int n)
+{
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
   int stride = gridDim.x * blockDim.x;
 
@@ -27,57 +27,50 @@ __global__ void kernel(float *a, int n) {
     float x = (float)tid;
     float s = sinf(x);
     float c = cosf(x);
-    a[tid] = a[tid] + sqrtf(s * s + c * c);
+    a[tid] = a[tid] + sqrtf(s*s+c*c);
   }
 }
 
-float max_error(float *a, int n) {
+float max_error(float *a, int n)
+{
   float max_err = 0;
   for (int i = 0; i < n; i++) {
-    float error = fabs(a[i] - 1.0f);
-    if (error > max_err)
-      max_err = error;
+    float error = fabs(a[i]-1.0f);
+    if (error > max_err) max_err = error;
   }
   return max_err;
 }
 
 int main() {
-  const size_t N = 1 << 9;
+  const size_t N = 1<<9;
 
   constexpr int blocksize = 256;
-  constexpr int gridsize = (N - 1 + blocksize) / blocksize;
-  constexpr size_t N_bytes = N * sizeof(float);
+  constexpr int gridsize =(N-1+blocksize)/blocksize;
+  constexpr size_t N_bytes = N*sizeof(float);
 
   float *a;
   float *d_a;
 
-  // #error declare a new stream variable with hipStream_t
-  hipStream_t stream;
+  #error declare a new stream variable with hipStream_t
+  #error create the HIP stream with hipStreamCreate
 
-  // #error create the HIP stream with hipStreamCreate
-  HIP_ERRCHK(hipStreamCreate(&stream));
-
-  a = (float *)malloc(N_bytes);
-  HIP_ERRCHK(hipMalloc((void **)&d_a, N_bytes));
+  a = (float*) malloc(N_bytes);
+  HIP_ERRCHK(hipMalloc((void**)&d_a, N_bytes));
 
   memset(a, 0, N_bytes);
 
-  // #error replace hipMemcpy with its Async counterpart, to copy data to the
-  // device using your stream
+  #error replace hipMemcpy with its Async counterpart, to copy data to the device using your stream
+  HIP_ERRCHK(hipMemcpy(d_a, a, N_bytes, hipMemcpyHostToDevice));
 
-  HIP_ERRCHK(hipMemcpyAsync(d_a, a, N_bytes, hipMemcpyHostToDevice, stream));
-  // HIP_ERRCHK(hipMemcpy(d_a, a, N_bytes, hipMemcpyHostToDevice));
-
-  // #error specify your stream at kernel launch
-  kernel<<<gridsize, blocksize, 0, stream>>>(d_a, N);
+  #error specify your stream at kernel launch
+  kernel<<<gridsize, blocksize,0,0>>>(d_a, N);
   HIP_ERRCHK(hipGetLastError());
 
-  // #error replace hipMemcpy with its Async counterpart to copy data back to
-  // host using your stream
-  HIP_ERRCHK(hipMemcpyAsync(a, d_a, N_bytes, hipMemcpyDeviceToHost, stream));
+  #error replace hipMemcpy with its Async counterpart to copy data back to host using your stream
+  HIP_ERRCHK(hipMemcpy(a, d_a, N_bytes, hipMemcpyDeviceToHost));
 
-  // #error synchronize the host with your stream, before continuing
-  HIP_ERRCHK(hipStreamSynchronize(stream));
+  #error synchronize the host with your stream, before continuing
+
   // Print out 10 indexes in the array a
   for (int i = 0; i < 10; i++)
     printf("%f ", a[i]);
@@ -88,6 +81,5 @@ int main() {
   HIP_ERRCHK(hipFree(d_a));
   free(a);
 
-  // #error destroy the stream
-  HIP_ERRCHK(hipStreamDestroy(stream));
+  #error destroy the stream
 }

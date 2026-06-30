@@ -6,12 +6,10 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # Overlapping communication and computation
 
-Note: this exercise assumes a knowledge about basic MPI programming
-
-In this exercise you can investigate how to hide communication costs
-by overlapping communication with computation. As computations are done
-in GPU asynchronously to the host CPU, CPU can participate in the message
-progress and there is more potential for overlap than when using only CPUs.
+In this exercise you investigate how to hide communication costs
+by overlapping communication with computation. Since GPU is asynchronous with
+the host, CPU is free for message passing communication offering another
+opportunity for overlapping computation and communication.
 
 The code [jacobi.cpp](jacobi.cpp) solves two dimensional Poisson equation with
 Jacobi iteration (see end of this document for information about the method).
@@ -39,7 +37,7 @@ all MPI calls with roctx markers).
 
 3. When computing a single grid point, information only about the neighbouring grid points is needed.
 Thus, it is possible to compute the inner part of the grid separately from the outermost rows,
-and perform the communication concurrently to the computation of the inner region. Try to implement
+and perform the communication concurrently to the computation of the inner region. Implement
 this overlapping. Does the performance improve? How does the trace look now?
 
 ## Background about Poisson equation and Jacobi iteration

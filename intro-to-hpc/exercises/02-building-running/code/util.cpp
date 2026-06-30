@@ -24,10 +24,9 @@ void print_hello()
     char *s;
     s = getenv("SLURM_PROCID");
     int id = s ? atoi(s) : 0;
-    id = id + 1;
     s = getenv("SLURM_NTASKS");
     int ntasks = s ? atoi(s) : 1;
     char *node = getenv("SLURMD_NODENAME");
 
-    printf("Hello Nuuksio from slurm process id %d/%d on node %s\n", id, ntasks, node);
+    printf("Hello world from slurm process id %d/%d on node %s\n", id, ntasks, node);
 }

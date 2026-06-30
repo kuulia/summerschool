@@ -2,60 +2,54 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include "helper_functions.hpp"
 #include <cstdio>
-#include <iostream>
-#include <omp.h>
-#include <ostream>
-#include <span>
 #include <string>
 #include <vector>
+#include <omp.h>
+#include "helper_functions.hpp"
 
-int main(int argc, char *argv[]) {
-  // Array size
-  int n = 102400;
-  if (argc > 1) {
-    n = std::stoi(argv[1]);
-  }
-  printf("Array size n = %d\n", n);
 
-  double alpha;
-  double *_x = (double *)malloc(n * sizeof(double));
-  std::span<double> x(_x, n);
-  double *_y = (double *)malloc(n * sizeof(double));
-  std::span<double> y(_y, n);
+int main(int argc, char* argv[]) {
+    // Array size
+    int n = 102400;
+    if (argc > 1) {
+        n = std::stoi(argv[1]);
+    }
+    printf("Array size n = %d\n", n);
 
-  // Initialization
-  alpha = 3.0;
-#pragma omp parallel for schedule(static, 10)
-  for (int i = 0; i < n; i++) {
-    double frac = 1.0 / ((double)(n - 1));
-    x[i] = i * frac;
-    y[i] = i * frac * 100;
-  }
+    double alpha;
+    std::vector<double> x(n), y(n);
 
-  // Print input values
-  printf("Input:\n");
-  printf("a = %8.4f\n", alpha);
-  print_array("x", x);
-  print_array("y", y);
+    // Initialization
+    alpha = 3.0;
+    for (int i = 0; i < n; i++) {
+        double frac = 1.0 / ((double) (n - 1));
+        x[i] = i * frac;
+        y[i] = i * frac * 100;
+    }
 
-  // Start timing
-  double t0 = omp_get_wtime();
+    // Print input values
+    printf("Input:\n");
+    printf("a = %8.4f\n", alpha);
+    print_array("x", x);
+    print_array("y", y);
 
-// Calculate axpy
-#pragma omp parallel for schedule(static, 20)
-  for (int i = 0; i < n; i++) {
-    y[i] += alpha * x[i];
-  }
+    // Start timing
+    double t0 = omp_get_wtime();
 
-  // End timing
-  double t1 = omp_get_wtime();
+    // Calculate axpy
+    #pragma omp parallel for
+    for (int i = 0; i < n; i++) {
+        y[i] += alpha * x[i];
+    }
 
-  // Print output values
-  printf("Output:\n");
-  print_array("y", y);
-  printf("Calculation took %.3f milliseconds\n", (t1 - t0) * 1e3);
+    // End timing
+    double t1 = omp_get_wtime();
 
-  return 0;
+    // Print output values
+    printf("Output:\n");
+    print_array("y", y);
+    printf("Calculation took %.3f milliseconds\n", (t1 - t0) * 1e3);
+
+    return 0;
 }

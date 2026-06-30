@@ -217,8 +217,8 @@ lang:   en
 ...
 
 ```
-</small>
 
+- The `iso_c_binding` module can be used to build a Fortran interface to such C library
 
 # Example: Calling hipblas
 
@@ -335,7 +335,7 @@ end module kernels
 # Summary
 
 - Asynchronous device execution is possible, but requires explicit synchronization
-- OpenMP programs can work in conjuction with CUDA/HIP kernels and GPU libraries
+- OpenMP programs can work in conjunction with CUDA/HIP kernels and GPU libraries
 - Key constructs for interoperability:
-  - `use_device_ptr`: get device pointer for a data mapping managed by OpenMP
+  - `use_device_ptr`: get the device pointer for a data mapping managed by OpenMP
   - `is_device_ptr`: use a non-OpenMP-managed device pointer for the device execution
