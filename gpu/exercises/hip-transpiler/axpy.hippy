@@ -1,13 +1,26 @@
+# Number of elements in the vectors
 const int N = 1024
 
+# GPU kernel: computes y = a*x + y for each element in parallel
 kernel axpy(a: float, x: float*, y: float*, N: int):
-    i = global_index()
-    if i < N:
+    i = global_index()  # each thread handles one element
+    if i < N:           # bounds check
         y[i] += a * x[i]
 
+# Initialize host-side values: a is a scalar, x and y are linearly spaced
 init a = 3.0, x = linspace(0.0, 1.0), y = linspace(0.0, 100.0)
+
+# Allocate GPU memory for x and y (a is passed by value to the kernel)
 buffer float a, x(N), y(N)
+
+# Copy x and y from host to GPU
 upload x, y
+
+# Launch the kernel with N threads total, 256 per block
 launch axpy(N)(a, x, y, N)
+
+# Copy y back from GPU to host
 download y
+
+# Print the first few and last elements of each vector
 print x, y

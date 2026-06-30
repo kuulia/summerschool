@@ -60,6 +60,17 @@ class BodyIndenter:
             yield Token("_DEDENT", "")
 
 
+def strip_comments(source):
+    """Strip # comments (Python-style) from every line before parsing."""
+    lines = []
+    for line in source.splitlines(keepends=True):
+        idx = line.find('#')
+        if idx >= 0:
+            line = line[:idx].rstrip() + '\n'
+        lines.append(line)
+    return ''.join(lines)
+
+
 def build_parser():
     with open(GRAMMAR_PATH) as f:
         grammar = f.read()
@@ -464,10 +475,15 @@ def gen_print(line, buffer_info):
             host = f"h_{name}"
             out.append(
                 f'{{\n'
-                f'    const int _n = {size} < 8 ? {size} : 8;\n'
+                f'    const int _show = 4;\n'
                 f'    printf("{name}:");\n'
-                f'    for (int _i = 0; _i < _n; _i++) printf(" {fmt}", {host}[_i]);\n'
-                f'    if ({size} > _n) printf(" ...");\n'
+                f'    if ({size} <= 2 * _show) {{\n'
+                f'        for (int _i = 0; _i < {size}; _i++) printf(" {fmt}", {host}[_i]);\n'
+                f'    }} else {{\n'
+                f'        for (int _i = 0; _i < _show; _i++) printf(" {fmt}", {host}[_i]);\n'
+                f'        printf(" ...");\n'
+                f'        for (int _i = {size} - _show; _i < {size}; _i++) printf(" {fmt}", {host}[_i]);\n'
+                f'    }}\n'
                 f'    printf("\\n");\n'
                 f'}}'
             )
@@ -595,6 +611,7 @@ def main():
         source = f.read()
     if not source.endswith("\n"):
         source += "\n"
+    source = strip_comments(source)
 
     parser = build_parser()
     try:

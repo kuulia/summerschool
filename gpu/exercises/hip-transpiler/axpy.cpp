@@ -42,17 +42,27 @@ int main() {
     HIP_ERRCHK(hipMemcpy(h_y, d_y, N * sizeof(float), hipMemcpyDeviceToHost));
 
     {
-        const int _n = N < 8 ? N : 8;
+        const int _show = 4;
         printf("x:");
-        for (int _i = 0; _i < _n; _i++) printf(" %g", h_x[_i]);
-        if (N > _n) printf(" ...");
+        if (N <= 2 * _show) {
+            for (int _i = 0; _i < N; _i++) printf(" %g", h_x[_i]);
+        } else {
+            for (int _i = 0; _i < _show; _i++) printf(" %g", h_x[_i]);
+            printf(" ...");
+            for (int _i = N - _show; _i < N; _i++) printf(" %g", h_x[_i]);
+        }
         printf("\n");
     }
     {
-        const int _n = N < 8 ? N : 8;
+        const int _show = 4;
         printf("y:");
-        for (int _i = 0; _i < _n; _i++) printf(" %g", h_y[_i]);
-        if (N > _n) printf(" ...");
+        if (N <= 2 * _show) {
+            for (int _i = 0; _i < N; _i++) printf(" %g", h_y[_i]);
+        } else {
+            for (int _i = 0; _i < _show; _i++) printf(" %g", h_y[_i]);
+            printf(" ...");
+            for (int _i = N - _show; _i < N; _i++) printf(" %g", h_y[_i]);
+        }
         printf("\n");
     }
 
