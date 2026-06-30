@@ -1,0 +1,14 @@
+const int N = 512
+
+kernel sum(x: float*, a: float*, n: int):
+    i = global_index()
+    if i < n:
+        atomicAdd(a, x[i])
+
+init x = linspace(1.0, 1.0), a = 0.0
+
+buffer float x(N), a(1)
+upload x, a
+launch sum(N)(x, a, N)
+download a
+print a

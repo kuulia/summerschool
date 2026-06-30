@@ -261,7 +261,7 @@ KERNEL_HEADER_RE = re.compile(
     r"kernel\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*:\s*$"
 )
 BUFFER_LINE_RE = re.compile(r"buffer\s+([A-Za-z_]\w*\*?)\s+(.*)$")
-BUFFER_ITEM_RE = re.compile(r"([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)")
+BUFFER_ITEM_RE = re.compile(r"([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*|[0-9]+)\s*\)")
 LAUNCH_LINE_RE = re.compile(
     r"launch\s+([A-Za-z_]\w*)\s*\(([^()]*)\)\s*\((.*)\)\s*$"
 )
@@ -323,7 +323,7 @@ def parse_buffer_info(line):
         item = item.strip()
         if not item:
             continue
-        am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)$", item)
+        am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*|[0-9]+)\s*\)$", item)
         sm = re.match(r"^([A-Za-z_]\w*)$", item)
         if am:
             info[am.group(1)] = (elem_type, am.group(2))
@@ -409,7 +409,7 @@ def gen_buffer_decl(line, buffer_info, explicit_mem):
     if explicit_mem:
         for item in re.split(r",\s*", rest.strip()):
             item = item.strip()
-            am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)$", item)
+            am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*|[0-9]+)\s*\)$", item)
             if am:
                 bname, bsize = am.group(1), am.group(2)
                 decls.append(f"{elem_type} *d_{bname} = nullptr;")

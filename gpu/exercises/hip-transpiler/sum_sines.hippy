@@ -1,0 +1,16 @@
+# Sum of sin(i) for i = 0..N-1, equivalent to the OpenMP reduction exercise
+const int N = 100000
+
+# Each thread computes sin(i) and atomically adds its contribution to the total
+kernel sum_sines(a: float*, n: int):
+    i = global_index()
+    if i < n:
+        atomicAdd(a, sinf((float)i))
+
+# Accumulator starts at zero
+init a = 0.0
+buffer float a(1)
+upload a
+launch sum_sines(N)(a, N)
+download a
+print a
