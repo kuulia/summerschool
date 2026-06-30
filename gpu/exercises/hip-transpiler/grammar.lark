@@ -15,6 +15,7 @@ item: kernel_def
     | upload_stmt
     | download_stmt
     | launch_stmt
+    | print_stmt
 
 // ---- kernel definition ----
 // kernel name(param: type, param: type, ...):
@@ -44,6 +45,10 @@ download_stmt: DOWNLOAD_LINE
 // launch kernel_name(N, threads=256)(arg, arg, ...)
 launch_stmt: LAUNCH_LINE
 
+// ---- print ----
+// print name, name, ...
+print_stmt: PRINT_LINE
+
 KERNEL_HEADER: /kernel[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*\([^\n]*\)[ \t]*:[ \t]*\n/
 CONST_LINE: /const[ \t]+[^\n]+\n/
 BUFFER_LINE: /buffer[ \t]+[^\n]+\n/
@@ -51,6 +56,7 @@ INIT_LINE: /init[ \t]+[^\n]+\n/
 UPLOAD_LINE: /upload[ \t]+[^\n]+\n/
 DOWNLOAD_LINE: /download[ \t]+[^\n]+\n/
 LAUNCH_LINE: /launch[ \t]+[^\n]+\n/
+PRINT_LINE: /print[ \t]+[^\n]+\n/
 BODY_LINE: /[ \t]+[^\n]*\n/
 BLANK_LINE: /[ \t]*\n/
 

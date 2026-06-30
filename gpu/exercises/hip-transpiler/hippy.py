@@ -359,7 +359,7 @@ def gen_init(line, buffer_info):
     return "\n".join(out)
 
 
-def gen_buffer_decl(line):
+def gen_buffer_decl(line, buffer_info, explicit_mem):
     line = line.strip()
     m = BUFFER_LINE_RE.match(line)
     if not m:
@@ -369,29 +369,86 @@ def gen_buffer_decl(line):
     elem_type = cpp_type.replace("*", "")
 
     decls = []
-    for item_m in BUFFER_ITEM_RE.finditer(rest):
-        bname, bsize = item_m.group(1), item_m.group(2)
-        decls.append(f"GPUBuffer<{elem_type}> {bname}({bsize});")
+    if explicit_mem:
+        for item in re.split(r",\s*", rest.strip()):
+            item = item.strip()
+            am = re.match(r"^([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*\)$", item)
+            if am:
+                bname, bsize = am.group(1), am.group(2)
+                decls.append(f"{elem_type} *d_{bname} = nullptr;")
+                decls.append(f"HIP_ERRCHK(hipMalloc(&d_{bname}, {bsize} * sizeof({elem_type})));")
+            # scalars: passed by value, no device allocation needed
+    else:
+        for item_m in BUFFER_ITEM_RE.finditer(rest):
+            bname, bsize = item_m.group(1), item_m.group(2)
+            decls.append(f"GPUBuffer<{elem_type}> {bname}({bsize});")
     return "\n".join(decls)
 
 
-def gen_upload(line):
+def gen_upload(line, buffer_info, explicit_mem):
     line = line.strip()
     names = [n.strip() for n in line[len("upload"):].strip().split(",") if n.strip()]
+    if explicit_mem:
+        out = []
+        for n in names:
+            if n in buffer_info and buffer_info[n][1] is not None:
+                elem_type, size = buffer_info[n]
+                out.append(f"HIP_ERRCHK(hipMemcpy(d_{n}, h_{n}, {size} * sizeof({elem_type}), hipMemcpyHostToDevice));")
+            else:
+                out.append(f"// TODO: upload {n} — not found in buffer declarations")
+        return "\n".join(out)
     return "\n".join(
         f"{n}.upload(h_{n});  // TODO: ensure h_{n} is your host-side array" for n in names
     )
 
 
-def gen_download(line):
+def gen_download(line, buffer_info, explicit_mem):
     line = line.strip()
     names = [n.strip() for n in line[len("download"):].strip().split(",") if n.strip()]
+    if explicit_mem:
+        out = []
+        for n in names:
+            if n in buffer_info and buffer_info[n][1] is not None:
+                elem_type, size = buffer_info[n]
+                out.append(f"HIP_ERRCHK(hipMemcpy(h_{n}, d_{n}, {size} * sizeof({elem_type}), hipMemcpyDeviceToHost));")
+            else:
+                out.append(f"// TODO: download {n} — not found in buffer declarations")
+        return "\n".join(out)
     return "\n".join(
         f"{n}.download(h_{n});  // TODO: ensure h_{n} is your host-side array" for n in names
     )
 
 
-def gen_launch(line):
+FORMAT_SPEC = {"float": "%g", "double": "%g", "int": "%d"}
+
+
+def gen_print(line, buffer_info):
+    """'print x, y' -> printf loop showing up to 8 elements + ellipsis."""
+    names = [n.strip() for n in line.strip()[len("print"):].strip().split(",") if n.strip()]
+    out = []
+    for name in names:
+        if name not in buffer_info:
+            out.append(f'// TODO: print {name} — not found in buffer declarations')
+            continue
+        elem_type, size = buffer_info[name]
+        fmt = FORMAT_SPEC.get(elem_type, "%g")
+        if size is None:
+            out.append(f'printf("{name} = {fmt}\\n", {name});')
+        else:
+            host = f"h_{name}"
+            out.append(
+                f'{{\n'
+                f'    const int _n = {size} < 8 ? {size} : 8;\n'
+                f'    printf("{name}:");\n'
+                f'    for (int _i = 0; _i < _n; _i++) printf(" {fmt}", {host}[_i]);\n'
+                f'    if ({size} > _n) printf(" ...");\n'
+                f'    printf("\\n");\n'
+                f'}}'
+            )
+    return "\n".join(out)
+
+
+def gen_launch(line, buffer_info, explicit_mem):
     line = line.strip()
     m = LAUNCH_LINE_RE.match(line)
     if not m:
@@ -405,7 +462,18 @@ def gen_launch(line):
         if p.startswith("threads"):
             threads = p.split("=")[1].strip()
 
-    args_str = arglist.strip()
+    if explicit_mem:
+        # map array buffer names to their d_ device pointer
+        args = []
+        for arg in arglist.split(","):
+            arg = arg.strip()
+            if arg in buffer_info and buffer_info[arg][1] is not None:
+                args.append(f"d_{arg}")
+            else:
+                args.append(arg)
+        args_str = ", ".join(args)
+    else:
+        args_str = arglist.strip()
 
     return (
         f"{kname}<<<hippy_blocks({size_expr}, {threads}), {threads}>>>({args_str});\n"
@@ -414,12 +482,12 @@ def gen_launch(line):
     )
 
 
-def generate(tree, source_name):
+def generate(tree, source_name, explicit_mem=False):
     consts_cpp = []
     kernels_cpp = []
     main_body = []
 
-    # First pass: collect buffer type/size info needed by gen_init
+    # First pass: collect buffer type/size info needed by gen_init and explicit mode
     buffer_info = {}
     for item in tree.children:
         node = item.children[0]
@@ -437,23 +505,36 @@ def generate(tree, source_name):
         elif node.data == "const_decl":
             consts_cpp.append(gen_const(str(node.children[0])))
         elif node.data == "buffer_decl":
-            main_body.append(gen_buffer_decl(str(node.children[0])))
+            main_body.append(gen_buffer_decl(str(node.children[0]), buffer_info, explicit_mem))
         elif node.data == "init_stmt":
             main_body.append(gen_init(str(node.children[0]), buffer_info))
         elif node.data == "upload_stmt":
-            main_body.append(gen_upload(str(node.children[0])))
+            main_body.append(gen_upload(str(node.children[0]), buffer_info, explicit_mem))
         elif node.data == "download_stmt":
-            main_body.append(gen_download(str(node.children[0])))
+            main_body.append(gen_download(str(node.children[0]), buffer_info, explicit_mem))
         elif node.data == "launch_stmt":
-            main_body.append(gen_launch(str(node.children[0])))
+            main_body.append(gen_launch(str(node.children[0]), buffer_info, explicit_mem))
+        elif node.data == "print_stmt":
+            main_body.append(gen_print(str(node.children[0]), buffer_info))
+
+    # Explicit mode: free all device allocations at the end of main
+    if explicit_mem:
+        free_lines = [
+            f"HIP_ERRCHK(hipFree(d_{name}));"
+            for name, (_, size) in buffer_info.items()
+            if size is not None
+        ]
+        if free_lines:
+            main_body.append("\n".join(free_lines))
 
     out = []
     out.append(f"// Auto-generated by hippy from {source_name}")
     out.append("// Generated scaffold — edit freely from here on.")
-    out.append("#include \"error_checking.hpp\"")
+    out.append("#include \"../error_checking.hpp\"")
     out.append("#include <cstdlib>")
     out.append("")
-    out.append(GPU_BUFFER_TEMPLATE)
+    if not explicit_mem:
+        out.append(GPU_BUFFER_TEMPLATE)
     if consts_cpp:
         out.append("// ---- constants ----")
         out.extend(consts_cpp)
@@ -479,6 +560,8 @@ def main():
     ap = argparse.ArgumentParser(description="hippy: .hippy -> .hip scaffold generator")
     ap.add_argument("input", help="input .hippy file")
     ap.add_argument("-o", "--output", help="output .hip file", default=None)
+    ap.add_argument("--explicit", action="store_true",
+                    help="use explicit hipMalloc/hipFree instead of GPUBuffer<T> RAII wrapper")
     args = ap.parse_args()
 
     with open(args.input) as f:
@@ -493,7 +576,7 @@ def main():
         print(f"hippy: parse error in {args.input}:\n{e}", file=sys.stderr)
         sys.exit(1)
 
-    cpp_code = generate(tree, args.input)
+    cpp_code = generate(tree, args.input, explicit_mem=args.explicit)
 
     out_path = args.output or (args.input.rsplit(".", 1)[0] + ".hip")
     with open(out_path, "w") as f:
