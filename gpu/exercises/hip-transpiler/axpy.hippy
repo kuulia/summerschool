@@ -1,0 +1,13 @@
+const int N = 1024
+const int n = N
+
+kernel axpy(a: float, x: float*, y: float*, n: int):
+    i = global_index()
+    if i < n:
+        y[i] = a * x[i]
+
+init a = 2.0, x = 1.0, y = 0.0
+buffer float a, x(N), y(N)
+upload x, y
+launch axpy(N)(a, x, y, n)
+download y
