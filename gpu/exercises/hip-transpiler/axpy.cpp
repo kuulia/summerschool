@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 inline int hippy_blocks(int n, int threads = 256) {
-    return (n + threads - 1) / threads;
+  return (n + threads - 1) / threads;
 }
 
 // ---- constants ----
@@ -12,63 +12,73 @@ constexpr int N = 10000;
 
 // ---- kernels ----
 
-__global__ void axpy(float a, float* x, float* y, int N) {
-    int i = (blockIdx.x * blockDim.x + threadIdx.x);  // TODO: hippy guessed 'int' for i; fix the type if wrong
-    if (i < N) {
-        y[i] += a * x[i];
-    }
+__global__ void axpy(float a, float *x, float *y, int N) {
+  int i =
+      (blockIdx.x * blockDim.x +
+       threadIdx.x); // TODO: hippy guessed 'int' for i; fix the type if wrong
+  if (i < N) {
+    y[i] += a * x[i];
+  }
 }
 
 // ---- host code ----
 int main() {
-    float a = 3.0f;
-    float h_x[N];
-    for (int i = 0; i < N; i++) h_x[i] = 0.0f + i * (1.0f - 0.0f) / (N - 1);
-    float h_y[N];
-    for (int i = 0; i < N; i++) h_y[i] = 0.0f + i * (100.0f - 0.0f) / (N - 1);
+  float a = 3.0f;
+  float h_x[N];
+  for (int i = 0; i < N; i++)
+    h_x[i] = 0.0f + i * (1.0f - 0.0f) / (N - 1);
+  float h_y[N];
+  for (int i = 0; i < N; i++)
+    h_y[i] = 0.0f + i * (100.0f - 0.0f) / (N - 1);
 
-    float *d_x = nullptr;
-    HIP_ERRCHK(hipMalloc(&d_x, N * sizeof(float)));
-    float *d_y = nullptr;
-    HIP_ERRCHK(hipMalloc(&d_y, N * sizeof(float)));
+  float *d_x = nullptr;
+  HIP_ERRCHK(hipMalloc(&d_x, N * sizeof(float)));
+  float *d_y = nullptr;
+  HIP_ERRCHK(hipMalloc(&d_y, N * sizeof(float)));
 
-    HIP_ERRCHK(hipMemcpy(d_x, h_x, N * sizeof(float), hipMemcpyHostToDevice));
-    HIP_ERRCHK(hipMemcpy(d_y, h_y, N * sizeof(float), hipMemcpyHostToDevice));
+  HIP_ERRCHK(hipMemcpy(d_x, h_x, N * sizeof(float), hipMemcpyHostToDevice));
+  HIP_ERRCHK(hipMemcpy(d_y, h_y, N * sizeof(float), hipMemcpyHostToDevice));
 
-    axpy<<<hippy_blocks(N, 256), 256>>>(a, d_x, d_y, N);
-    HIP_ERRCHK(hipGetLastError());
-    HIP_ERRCHK(hipDeviceSynchronize());
+  axpy<<<hippy_blocks(N, 256), 256>>>(a, d_x, d_y, N);
+  HIP_ERRCHK(hipGetLastError());
+  HIP_ERRCHK(hipDeviceSynchronize());
 
-    HIP_ERRCHK(hipMemcpy(h_y, d_y, N * sizeof(float), hipMemcpyDeviceToHost));
+  HIP_ERRCHK(hipMemcpy(h_y, d_y, N * sizeof(float), hipMemcpyDeviceToHost));
 
-    printf("a = %g\n", a);
-    {
-        const int _show = 4;
-        printf("x:");
-        if (N <= 2 * _show) {
-            for (int _i = 0; _i < N; _i++) printf(" %g", h_x[_i]);
-        } else {
-            for (int _i = 0; _i < _show; _i++) printf(" %g", h_x[_i]);
-            printf(" ...");
-            for (int _i = N - _show; _i < N; _i++) printf(" %g", h_x[_i]);
-        }
-        printf("\n");
+  printf("a = %g\n", a);
+  {
+    const int _show = 4;
+    printf("x:");
+    if (N <= 2 * _show) {
+      for (int _i = 0; _i < N; _i++)
+        printf(" %g", h_x[_i]);
+    } else {
+      for (int _i = 0; _i < _show; _i++)
+        printf(" %g", h_x[_i]);
+      printf(" ...");
+      for (int _i = N - _show; _i < N; _i++)
+        printf(" %g", h_x[_i]);
     }
-    {
-        const int _show = 4;
-        printf("y:");
-        if (N <= 2 * _show) {
-            for (int _i = 0; _i < N; _i++) printf(" %g", h_y[_i]);
-        } else {
-            for (int _i = 0; _i < _show; _i++) printf(" %g", h_y[_i]);
-            printf(" ...");
-            for (int _i = N - _show; _i < N; _i++) printf(" %g", h_y[_i]);
-        }
-        printf("\n");
+    printf("\n");
+  }
+  {
+    const int _show = 4;
+    printf("y:");
+    if (N <= 2 * _show) {
+      for (int _i = 0; _i < N; _i++)
+        printf(" %g", h_y[_i]);
+    } else {
+      for (int _i = 0; _i < _show; _i++)
+        printf(" %g", h_y[_i]);
+      printf(" ...");
+      for (int _i = N - _show; _i < N; _i++)
+        printf(" %g", h_y[_i]);
     }
+    printf("\n");
+  }
 
-    HIP_ERRCHK(hipFree(d_x));
-    HIP_ERRCHK(hipFree(d_y));
+  HIP_ERRCHK(hipFree(d_x));
+  HIP_ERRCHK(hipFree(d_y));
 
-    return 0;
+  return 0;
 }
