@@ -29,7 +29,7 @@ increasing number of GPUs?
 
 2. Run the code under `rocprofv3` with 4 MPI tasks / GPUs, e.g.
 ```
-srun ... rocprofv3 -r --output-format pftrace ./jacobi
+srun rocprofv3 -r --output-format pftrace -- ./jacobi
 ```
 and investigate the trace. The communication step is traced with roctx markers.
 (Note: https://github.com/IBM/mpitrace provides a simple mechanism for tracing 

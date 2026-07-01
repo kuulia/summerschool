@@ -34,17 +34,6 @@ Good project design helps you
 
 </div>
 
-# Parallelisation strategies
-
-- Planning includes thinking what is the target platform
-- **Target machines**: laptops, small clusters, supercomputers
-    - OpenMP, MPI, MPI+OpenMP, GPUs
-- From shared memory to distributed memory machines
-- Moving from <1000 cores to >10k cores
-    - Parallelisation strategies need to be considered
-    - Non-blocking, avoiding global calls, ...
-- **Accelerators**
-    - GPUs have their own tricks and quirks
 
 # The essentials
 - A sustainable HPC software project needs four things:
@@ -137,17 +126,17 @@ git push
 
 <div class=column>
 
-- Pull/merge request
+- Pull/merge request (GitHub/GitLab feature)
     - Proposed change
     - Place for review and discussion
     - Good place to run automatic checks
-- Issue
+- Issue (GitHub/GitLab feature)
     - Bug, feature idea, documentation gap, performance note
     - Should include enough information to reproduce the problem
 
 </div>
 
-# Section 2: Testing and CI/CD
+# Section 2: Testing
 
 # Testing
 - Tests check that the software behaves as expected
@@ -193,6 +182,8 @@ git push
 - High coverage is not the same as scientific correctness
 - Low coverage is a warning sign
 
+
+# Section 3: CI/CD
 
 # CI/CD
 - **Continuous Integration (CI)**
@@ -260,7 +251,8 @@ In a training repository:
     - Before release or production campaign: target-machine validation
 - Do not run production-scale benchmarks as normal CI jobs
 
-# Section 3: Documentation
+
+# Section 4: Documentation
 
 # Documentation
 - Documentation is part of the software project
@@ -295,6 +287,9 @@ In a training repository:
 
 </div>
 
+# Diátaxis framework
+
+![](images/diataxis_axes-of-needs.png)
 
 # Documentation for HPC software
 <div class=column>
@@ -317,6 +312,31 @@ In a training repository:
     - Numerical method
     - Parallelisation strategy
     - Performance model
+</div>
+
+
+# Facilitating collaboration
+
+<div class=column>
+- **Plan now** for $n_\mathrm{files} > 1$ and $n_\mathrm{contributors} > 1$
+   - Will make it easier to expand
+   - Future you will be grateful!
+- **Shared repository**
+- **Contribution guidelines**
+   - Pull/merge request contents
+   - Branches to use (`main`, `dev`, etc.)
+   - Formatting style
+</div>
+
+<div class=column>
+- **Common code format**
+   - Helps readability
+   - Use automated tools as much as possible
+      - Code formatting
+      - Code linting
+      - Can be checked/enforced in CI/CD
+      - Can be integrated in editor or IDE
+   - Example tools: `clang-format`, `Cppcheck`, `fprettify`
 </div>
 
 # Minimum viable project checklist

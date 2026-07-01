@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2024 CSC - IT Center for Science Ltd. <www.csc.fi>
+#
+# SPDX-License-Identifier: MIT
+
+# This file is used in the generation of the web page
+title: "HPC and AI"
+slidesdir: docs
